@@ -13,12 +13,11 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 function initMap() {
-    // Centrado estratégico en México
+    // Centrado estratégico para abarcar tanto el Pacífico como el Caribe y México
     appState.map = L.map('map', {
         zoomControl: false
-    }).setView([20.0, -100.0], 5);
+    }).setView([18.5, -92.0], 5);
 
-    // Mapa base limpio
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         maxZoom: 18,
         attribution: '&copy; OpenStreetMap contributors'
@@ -30,116 +29,149 @@ function initMap() {
 }
 
 function renderActiveStorms() {
-    // ---------------------------------------------------------
-    // 1. HURACÁN POLO (Pacífico Sur - Cat 4/5)
-    // ---------------------------------------------------------
+    // Limpiar capas anteriores si existieran
+    appState.markers.forEach(m => appState.map.removeLayer(m));
+    appState.lines.forEach(l => appState.map.removeLayer(l));
+    appState.markers = [];
+    appState.lines = [];
+
+    // =========================================================
+    // 1. SISTEMAS ACTIVOS EN EL OCÉANO PACÍFICO
+    // =========================================================
+    
+    // Huracán Polo (Pacífico - Cat 4/5)
     const poloLat = 16.8;
     const poloLon = -104.2;
-
-    // Cono de Incertidumbre Oficial (Polígono amplio y simétrico que engloba la trayectoria)
-    const poloConeCoords = [
+    const poloTrajectory = [
         [poloLat, poloLon],
-        [17.5, -105.8],
-        [20.5, -111.5],
-        [23.0, -116.0],
-        [21.0, -117.5],
-        [18.5, -112.0],
-        [16.2, -107.0]
+        [17.8, -107.0],
+        [19.5, -110.5],
+        [21.8, -114.5]
+    ];
+    const poloConeCoords = [
+        [16.2, -103.8],
+        [17.4, -103.5],
+        [23.0, -113.0],
+        [20.5, -116.5],
+        [15.8, -105.0]
     ];
 
-    const poloCone = L.polygon(poloConeCoords, {
-        color: '#dc2626',
+    dibujarSistemaCiclones("Huracán Polo (Cat. 4/5)", poloLat, poloLon, '#dc2626', '4', poloTrajectory, poloConeCoords, [
+        { lat: 17.8, lon: -107.0, label: 'M' },
+        { lat: 19.5, lon: -110.5, label: 'H' },
+        { lat: 21.8, lon: -114.5, label: 'T' }
+    ]);
+
+    // Huracán Odalys (Pacífico Abierto - Cat 1)
+    const odalysLat = 22.5;
+    const odalysLon = -122.0;
+    const odalysTrajectory = [
+        [odalysLat, odalysLon],
+        [24.0, -125.0],
+        [26.2, -129.5]
+    ];
+    const odalysConeCoords = [
+        [21.8, -121.5],
+        [23.2, -121.0],
+        [27.5, -128.5],
+        [25.0, -131.0]
+    ];
+
+    dibujarSistemaCiclones("Huracán Odalys (Cat. 1)", odalysLat, odalysLon, '#3b82f6', '1', odalysTrajectory, odalysConeCoords, [
+        { lat: 24.0, lon: -125.0, label: 'H' },
+        { lat: 26.2, lon: -129.5, label: 'T' }
+    ]);
+
+
+    // =========================================================
+    // 2. SISTEMAS ACTIVOS EN EL CARIBE Y ATLÁNTICO
+    // =========================================================
+
+    // Tormenta Tropical / Onda en el Caribe
+    const caribeLat = 15.5;
+    const caribeLon = -78.0;
+    const caribeTrajectory = [
+        [caribeLat, caribeLon],
+        [17.2, -82.5],
+        [19.5, -86.8]
+    ];
+    const caribeConeCoords = [
+        [14.8, -77.5],
+        [16.2, -77.2],
+        [20.5, -85.5],
+        [18.5, -88.2]
+    ];
+
+    dibujarSistemaCiclones("Tormenta Tropical en el Caribe", caribeLat, caribeLon, '#10b981', 'TT', caribeTrajectory, caribeConeCoords, [
+        { lat: 17.2, lon: -82.5, label: 'T' },
+        { lat: 19.5, lon: -86.8, label: 'H' }
+    ]);
+
+    // Polígono de probabilidad institucional en el Caribe (similar a las zonas verdes del SMN)
+    const zonaCaribeCoords = [
+        [12.0, -80.0],
+        [16.0, -70.0],
+        [19.0, -75.0],
+        [14.5, -84.0]
+    ];
+    const zonaCaribePoly = L.polygon(zonaCaribeCoords, {
+        color: '#eab308',
         weight: 1.5,
-        fillColor: '#ef4444',
-        fillOpacity: 0.2,
+        fillColor: '#22c55e',
+        fillOpacity: 0.22,
         dashArray: '5, 5'
     }).addTo(appState.map);
-    appState.lines.push(poloCone);
+    appState.lines.push(zonaCaribePoly);
+}
 
-    // Trayectoria central exacta alineada dentro del cono
-    const poloTrajectoryCoords = [
-        [poloLat, poloLon],
-        [17.6, -106.2],
-        [19.2, -109.0],
-        [21.5, -113.8]
-    ];
+function dibujarSistemaCiclones(nombre, lat, lon, colorHex, badgeTexto, trayectoriaCoords, conoCoords, secuenciales) {
+    // 1. Cono de incertidumbre simétrico
+    const cono = L.polygon(conoCoords, {
+        color: colorHex,
+        weight: 1.5,
+        fillColor: colorHex,
+        fillOpacity: 0.18,
+        dashArray: '4, 4'
+    }).addTo(appState.map);
+    appState.lines.push(cono);
 
-    const poloForecast = L.polyline(poloTrajectoryCoords, {
-        color: '#dc2626',
-        weight: 4,
+    // 2. Línea central de trayectoria
+    const lineaTrayectoria = L.polyline(trayectoriaCoords, {
+        color: colorHex,
+        weight: 3.5,
         opacity: 0.9
     }).addTo(appState.map);
-    appState.lines.push(poloForecast);
+    appState.lines.push(lineaTrayectoria);
 
-    // Puntos secuenciales institucionales sobre la trayectoria (M, H, T...)
-    const puntosSecuenciales = [
-        { lat: 17.6, lon: -106.2, label: 'M' },
-        { lat: 19.2, lon: -109.0, label: 'H' },
-        { lat: 21.5, lon: -113.8, label: 'T' }
-    ];
-
-    puntosSecuenciales.forEach(pt => {
+    // 3. Puntos secuenciales (T, H, M)
+    secuenciales.forEach(pt => {
         const seqIcon = L.divIcon({
             className: 'sequential-marker',
-            html: `<div style="background: white; color: #dc2626; width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: bold; border: 2px solid #dc2626; box-shadow: 0 2px 4px rgba(0,0,0,0.3);">${pt.label}</div>`,
-            iconSize: [26, 26],
-            iconAnchor: [13, 13]
+            html: `<div style="background: white; color: ${colorHex}; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: bold; border: 2px solid ${colorHex}; box-shadow: 0 2px 4px rgba(0,0,0,0.3);">${pt.label}</div>`,
+            iconSize: [24, 24],
+            iconAnchor: [12, 12]
         });
         const markerSeq = L.marker([pt.lat, pt.lon], { icon: seqIcon }).addTo(appState.map);
         appState.markers.push(markerSeq);
     });
 
-    // Zona de vigilancia / probabilidad baja adicional (como los polígonos verdes del SMN)
-    const zonaVigilanciaCoords = [
-        [12.5, -115.0],
-        [14.0, -100.0],
-        [17.0, -98.0],
-        [13.5, -112.0]
-    ];
-    const zonaVigilancia = L.polygon(zonaVigilanciaCoords, {
-        color: '#eab308',
-        weight: 2,
-        fillColor: '#22c55e',
-        fillOpacity: 0.25,
-        dashArray: '6, 6'
-    }).addTo(appState.map);
-    appState.lines.push(zonaVigilancia);
-
-    // Marcador principal de Huracán Polo (Cat 4/5)
-    const poloIcon = L.divIcon({
+    // 4. Marcador principal del ciclón en el ojo actual
+    const iconoPrincipal = L.divIcon({
         className: 'custom-storm-marker',
-        html: '<div style="background: #dc2626; color: white; width: 38px; height: 38px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 16px; font-weight: bold; box-shadow: 0 0 12px rgba(220,38,38,0.9); border: 2px solid #fff;">4</div>',
-        iconSize: [38, 38],
-        iconAnchor: [19, 19]
+        html: `<div style="background: ${colorHex}; color: white; width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 15px; font-weight: bold; box-shadow: 0 0 12px ${colorHex}; border: 2px solid #fff;">${badgeTexto}</div>`,
+        iconSize: [36, 36],
+        iconAnchor: [18, 18]
     });
 
-    const poloMarker = L.marker([poloLat, poloLon], { icon: poloIcon })
+    const marker = L.marker([lat, lon], { icon: iconoPrincipal })
         .addTo(appState.map)
-        .bindPopup("<b>🌀 Huracán Polo (Cat. 4/5)</b><br>Vientos: ~260 km/h<br>SMN/CONAGUA: Impacto potencial en litoral");
-    appState.markers.push(poloMarker);
-    poloMarker.openPopup();
-
-
-    // ---------------------------------------------------------
-    // 2. ZONA DE ALERTA AMARILLA / PREVENTIVA EN TIERRA
-    // ---------------------------------------------------------
-    const alertaTierraCoords = [
-        [19.0, -104.5],
-        [22.0, -108.0],
-        [20.5, -105.0],
-        [18.5, -103.0]
-    ];
-    const alertaTierra = L.polygon(alertaTierraCoords, {
-        color: '#eab308',
-        weight: 2,
-        fillColor: '#facc15',
-        fillOpacity: 0.3
-    }).addTo(appState.map);
-    appState.lines.push(alertaTierra);
+        .bindPopup(`<b>🌀 ${nombre}</b><br>Monitoreo oficial SMN / CONAGUA`);
+    
+    appState.markers.push(marker);
 }
 
 // =====================================================
-//  CAPAS VISUALES CON ICONOS INSTITUCIONALES CLAROS
+//  CAPAS VISUALES Y CLIMA LOCAL
 // =====================================================
 function aplicarCapaRadar(tipo) {
     if (appState.activeRadarLayer) {
@@ -155,14 +187,14 @@ function aplicarCapaRadar(tipo) {
     let htmlLeyenda = "";
     const groupLayers = [];
     const puntosInteres = [
-        { lat: 17.5, lon: -103.5 },
-        { lat: 18.5, lon: -105.5 },
-        { lat: 20.0, lon: -108.0 }
+        { lat: 17.8, lon: -107.0 },
+        { lat: 18.2, lon: -84.0 },
+        { lat: 24.0, lon: -125.0 }
     ];
 
     if (tipo === 'infrarrojo') {
         tituloLeyenda = "🛰️ Nubes y Masas Nubosas";
-        htmlLeyenda = '<div style="font-size:11px; line-height:1.4;"><b>☁️ Iconos:</b> Concentración masiva de humedad y convección profunda.</div>';
+        htmlLeyenda = '<div style="font-size:11px; line-height:1.4;"><b>☁️ Iconos:</b> Convección y nubosidad en Pacífico y Caribe.</div>';
         puntosInteres.forEach(pt => {
             const icono = L.divIcon({
                 className: 'weather-emoji',
@@ -173,7 +205,7 @@ function aplicarCapaRadar(tipo) {
         });
     } else if (tipo === 'vientos') {
         tituloLeyenda = "💨 Vectores de Viento";
-        htmlLeyenda = '<div style="font-size:11px; line-height:1.4;"><b>💨 Símbolos:</b> Dirección e intensidad de rachas ciclónicas.</div>';
+        htmlLeyenda = '<div style="font-size:11px; line-height:1.4;"><b>💨 Símbolos:</b> Dirección de flujos en ambas cuencas.</div>';
         puntosInteres.forEach(pt => {
             const icono = L.divIcon({
                 className: 'weather-emoji',
@@ -184,7 +216,7 @@ function aplicarCapaRadar(tipo) {
         });
     } else if (tipo === 'precipitacion') {
         tituloLeyenda = "🌧️ Zonas de Precipitación";
-        htmlLeyenda = '<div style="font-size:11px; line-height:1.4;"><b>🌧️ Símbolos:</b> Aguaceros fuertes y tormentas eléctricas.</div>';
+        htmlLeyenda = '<div style="font-size:11px; line-height:1.4;"><b>🌧️ Símbolos:</b> Lluvias intensas asociadas a sistemas.</div>';
         puntosInteres.forEach(pt => {
             const icono = L.divIcon({
                 className: 'weather-emoji',
@@ -231,22 +263,22 @@ function initLocalWeather() {
         localContainer.innerHTML = `
             <div class="panel-content-inner">
                 <h2 class="titulo-panel" style="font-size: 18px; margin-bottom: 6px;">📍 Clima en tu Ubicación Local</h2>
-                <p class="sub-texto" style="margin-bottom: 16px;">Monitoreo oficial directo para zonas costeras y peninsulares.</p>
+                <p class="sub-texto" style="margin-bottom: 16px;">Monitoreo oficial simultáneo para Pacífico y Caribe.</p>
 
-                <div class="card-option" style="background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.4); margin-bottom: 12px;">
+                <div class="card-option" style="background: rgba(220, 38, 38, 0.15); border: 1px solid rgba(220, 38, 38, 0.4); margin-bottom: 12px;">
                     <div style="display: flex; justify-content: space-between; font-weight: bold; color: #ef4444;">
-                        <span>⚠️ Huracán Polo (Pacífico)</span>
-                        <span>Efecto Indirecto / Vigente</span>
+                        <span>🌊 Cuenca del Pacífico (Polo / Odalys)</span>
+                        <span>Alerta Activa</span>
                     </div>
-                    <div class="sub-texto" style="margin-top: 6px;">Vaguadas y bandas nubosas reforzando lluvias en el sur y occidente del país.</div>
+                    <div class="sub-texto" style="margin-top: 6px;">Vigilancia en litoral del Pacífico por bandas nubosas y oleaje elevado.</div>
                 </div>
 
-                <div class="card-option" style="margin-bottom: 12px;">
-                    <div style="display: flex; justify-content: space-between; font-weight: bold; color: #f59e0b;">
-                        <span>🌴 Península de Yucatán y Caribe</span>
-                        <span>🌤️ 32°C / Tormentas Vespertinas</span>
+                <div class="card-option" style="background: rgba(16, 185, 129, 0.15); border: 1px solid rgba(16, 185, 129, 0.4); margin-bottom: 12px;">
+                    <div style="display: flex; justify-content: space-between; font-weight: bold; color: #10b981;">
+                        <span>🌴 Cuenca del Caribe y Península</span>
+                        <span>Vigilancia Tropical</span>
                     </div>
-                    <div class="sub-texto" style="margin-top: 6px;">Ambiente caluroso con presencia de chubascos dispersos por ondas tropicales. Sin ciclón directo amenazando la zona.</div>
+                    <div class="sub-texto" style="margin-top: 6px;">Seguimiento a perturbación en el Caribe central con potencial ciclónico gradual.</div>
                 </div>
             </div>
         `;
@@ -255,10 +287,10 @@ function initLocalWeather() {
 
 function abrirBoletinOficial(tipo) {
     let urlOficial = "https://smn.conagua.gob.mx/es/ciclones-tropicales/cuenca-del-pacifico";
-    if (tipo === 'puertos') {
+    if (tipo === 'caribe') {
+        urlOficial = "https://smn.conagua.gob.mx/es/ciclones-tropicales/cuenca-del-atlantico";
+    } else if (tipo === 'puertos') {
         urlOficial = "https://www.gob.mx/semar";
-    } else if (tipo === 'aviso_general') {
-        urlOficial = "https://smn.conagua.gob.mx/es/";
     }
     window.open(urlOficial, '_blank');
 }
