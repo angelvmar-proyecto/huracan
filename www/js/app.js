@@ -2,7 +2,8 @@ let appState = {
     currentTab: 'trayectoria',
     map: null,
     markers: [],
-    lines: []
+    lines: [],
+    activeRadarLayer: null
 };
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -10,26 +11,24 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 function initMap() {
-    // Centrado estratégico en México para visualizar ambas cuencas
+    // Centrado estratégico en México
     appState.map = L.map('map', {
         zoomControl: false
     }).setView([20.0, -100.0], 5);
 
-    // Mapa base clásico OpenStreetMap limpio (ciudades, fronteras y carreteras visibles)
+    // Mapa base clásico OpenStreetMap limpio
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         maxZoom: 18,
         attribution: '&copy; OpenStreetMap contributors'
     }).addTo(appState.map);
 
-    // Controles de zoom arriba a la derecha
     L.control.zoom({ position: 'topright' }).addTo(appState.map);
 
-    // Renderizar las tormentas activas en las cuencas
     renderActiveStorms();
 }
 
 function renderActiveStorms() {
-    // 1. HURACÁN POLO (Pacífico - Categoría 4/5, frente a costas de Guerrero/Michoacán/Colima)
+    // 1. HURACÁN POLO (Pacífico)
     const poloLat = 16.8;
     const poloLon = -104.2;
 
@@ -50,10 +49,9 @@ function renderActiveStorms() {
 
     const poloMarker = L.marker([poloLat, poloLon], { icon: poloIcon })
         .addTo(appState.map)
-        .bindPopup("<b>🌀 Huracán Polo (Cat. 4/5)</b><br>Vientos: ~240-260 km/h<br>Ubicación: Suroeste de México (Pacífico)");
+        .bindPopup("<b>🌀 Huracán Polo (Cat. 4/5)</b><br>Vientos: ~260 km/h<br>Ubicación: Suroeste de México");
     appState.markers.push(poloMarker);
 
-    // Trayectoria pronosticada de Polo hacia el Nor-Noroeste
     const poloForecast = L.polyline([
         [poloLat, poloLon],
         [18.5, -106.5],
@@ -65,8 +63,7 @@ function renderActiveStorms() {
     }).addTo(appState.map);
     appState.lines.push(poloForecast);
 
-
-    // 2. HURACÁN ODALYS (Pacífico Noroeste / mar adentro, mar abierto)
+    // 2. HURACÁN ODALYS (Pacífico Abierto)
     const odalysLat = 22.5;
     const odalysLon = -122.0;
 
@@ -79,11 +76,52 @@ function renderActiveStorms() {
 
     const odalysMarker = L.marker([odalysLat, odalysLon], { icon: odalysIcon })
         .addTo(appState.map)
-        .bindPopup("<b>🌀 Huracán Odalys (Cat. 1)</b><br>Vientos: ~120 km/h<br>Ubicación: Pacífico Abierto (Sin amenaza directa a tierra)");
+        .bindPopup("<b>🌀 Huracán Odalys (Cat. 1)</b><br>Vientos: ~120 km/h<br>Mar abierto");
     appState.markers.push(odalysMarker);
 
-    // Abrir por defecto el popup de Polo
     poloMarker.openPopup();
+}
+
+// =====================================================
+//  APLICAR CAPAS DE RADAR INTERACTIVAS SOBRE EL MAPA
+// =====================================================
+function aplicarCapaRadar(tipo) {
+    if (appState.activeRadarLayer) {
+        appState.map.removeLayer(appState.activeRadarLayer);
+        appState.activeRadarLayer = null;
+    }
+
+    if (tipo === 'infrarrojo') {
+        // Capa simulada de bandas nubosas por teselas públicas de radar/clima o WMS
+        appState.activeRadarLayer = L.tileLayer('https://tile.openweathermap.org/map/clouds_new/{z}/{x}/{y}.png?appid=demo', {
+            opacity: 0.6,
+            maxZoom: 18
+        }).addTo(appState.map);
+        alert("🛰️ Capa de Infrarrojo Satelital aplicada al mapa.");
+    } else if (tipo === 'vientos') {
+        appState.activeRadarLayer = L.tileLayer('https://tile.openweathermap.org/map/wind_new/{z}/{x}/{y}.png?appid=demo', {
+            opacity: 0.6,
+            maxZoom: 18
+        }).addTo(appState.map);
+        alert("💨 Capa de Vectores de Viento aplicada al mapa.");
+    } else if (tipo === 'precipitacion') {
+        appState.activeRadarLayer = L.tileLayer('https://tile.openweathermap.org/map/precipitation_new/{z}/{x}/{y}.png?appid=demo', {
+            opacity: 0.7,
+            maxZoom: 18
+        }).addTo(appState.map);
+        alert("🌧️ Capa de Acumulados de Precipitación aplicada al mapa.");
+    }
+
+    // Cambiar automáticamente a la pestaña de trayectoria para ver la capa aplicada
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.weather-panel').forEach(p => p.classList.remove('active'));
+    
+    // Activar botón y panel de trayectoria
+    document.querySelector('.weather-tabs button:first-child').classList.add('active');
+    document.getElementById('panel-trayectoria').classList.add('active');
+    appState.currentTab = 'trayectoria';
+
+    setTimeout(() => appState.map.invalidateSize(), 150);
 }
 
 function switchTab(tabId, evt) {
