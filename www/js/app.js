@@ -1,8 +1,8 @@
 let appState = {
     currentTab: 'trayectoria',
     map: null,
-    hurricaneMarker: null,
-    forecastLine: null
+    markers: [],
+    lines: []
 };
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -10,62 +10,80 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 function initMap() {
-    // Centrado estratégico en México para mostrar Pacífico y Caribe
+    // Centrado estratégico en México para visualizar ambas cuencas
     appState.map = L.map('map', {
         zoomControl: false
     }).setView([20.0, -100.0], 5);
 
-    // Mapa base clásico OpenStreetMap (Limpio, con ciudades, nombres y divisiones sin marcas invasivas)
+    // Mapa base clásico OpenStreetMap limpio (ciudades, fronteras y carreteras visibles)
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         maxZoom: 18,
         attribution: '&copy; OpenStreetMap contributors'
     }).addTo(appState.map);
 
-    // Controles de zoom táctiles arriba a la derecha
+    // Controles de zoom arriba a la derecha
     L.control.zoom({ position: 'topright' }).addTo(appState.map);
 
-    // Renderizar Huracán Polo en el Pacífico (Cat 5)
-    renderActiveHurricanes();
+    // Renderizar las tormentas activas en las cuencas
+    renderActiveStorms();
 }
 
-function renderActiveHurricanes() {
-    // Coordenadas de Huracán Polo (Pacífico mexicano)
+function renderActiveStorms() {
+    // 1. HURACÁN POLO (Pacífico - Categoría 4/5, frente a costas de Guerrero/Michoacán/Colima)
     const poloLat = 16.8;
     const poloLon = -104.2;
 
-    // Círculo de afectación
-    L.circle([poloLat, poloLon], {
+    const poloRadius = L.circle([poloLat, poloLon], {
         color: '#ef4444',
         fillColor: '#ef4444',
         fillOpacity: 0.2,
-        radius: 200000
+        radius: 220000
     }).addTo(appState.map);
+    appState.lines.push(poloRadius);
 
-    // Marcador del huracán
     const poloIcon = L.divIcon({
         className: 'custom-storm-marker',
-        html: '<div style="background: #ef4444; color: white; width: 38px; height: 38px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 18px; box-shadow: 0 0 15px rgba(239,68,68,0.9); border: 2px solid #fff;">🌀</div>',
-        iconSize: [38, 38],
-        iconAnchor: [19, 19]
+        html: '<div style="background: #ef4444; color: white; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 18px; box-shadow: 0 0 15px rgba(239,68,68,0.9); border: 2px solid #fff;">🌀</div>',
+        iconSize: [40, 40],
+        iconAnchor: [20, 20]
     });
 
-    appState.hurricaneMarker = L.marker([poloLat, poloLon], { icon: poloIcon })
+    const poloMarker = L.marker([poloLat, poloLon], { icon: poloIcon })
         .addTo(appState.map)
-        .bindPopup("<b>🌀 Huracán Polo (Categoría 5)</b><br>Vientos: 260 km/h<br>Ubicación: Suroeste de México (Pacífico)")
-        .openPopup();
+        .bindPopup("<b>🌀 Huracán Polo (Cat. 4/5)</b><br>Vientos: ~240-260 km/h<br>Ubicación: Suroeste de México (Pacífico)");
+    appState.markers.push(poloMarker);
 
-    // Línea de trayectoria pronosticada
-    const forecastCoords = [
+    // Trayectoria pronosticada de Polo hacia el Nor-Noroeste
+    const poloForecast = L.polyline([
         [poloLat, poloLon],
         [18.5, -106.5],
         [20.2, -109.0]
-    ];
-    
-    appState.forecastLine = L.polyline(forecastCoords, {
+    ], {
         color: '#f59e0b',
         weight: 4,
         dashArray: '8, 8'
     }).addTo(appState.map);
+    appState.lines.push(poloForecast);
+
+
+    // 2. HURACÁN ODALYS (Pacífico Noroeste / mar adentro, mar abierto)
+    const odalysLat = 22.5;
+    const odalysLon = -122.0;
+
+    const odalysIcon = L.divIcon({
+        className: 'custom-storm-marker',
+        html: '<div style="background: #3b82f6; color: white; width: 34px; height: 34px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 16px; box-shadow: 0 0 10px rgba(59,130,246,0.8); border: 2px solid #fff;">🌀</div>',
+        iconSize: [34, 34],
+        iconAnchor: [17, 17]
+    });
+
+    const odalysMarker = L.marker([odalysLat, odalysLon], { icon: odalysIcon })
+        .addTo(appState.map)
+        .bindPopup("<b>🌀 Huracán Odalys (Cat. 1)</b><br>Vientos: ~120 km/h<br>Ubicación: Pacífico Abierto (Sin amenaza directa a tierra)");
+    appState.markers.push(odalysMarker);
+
+    // Abrir por defecto el popup de Polo
+    poloMarker.openPopup();
 }
 
 function switchTab(tabId, evt) {
