@@ -12,12 +12,10 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 function initMap() {
-    // Centrado estratégico en México
     appState.map = L.map('map', {
         zoomControl: false
     }).setView([20.0, -100.0], 5);
 
-    // Corrección de la URL del mapa base OpenStreetMap (¡Restaurado con éxito!)
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         maxZoom: 18,
         attribution: '&copy; OpenStreetMap contributors'
@@ -29,7 +27,6 @@ function initMap() {
 }
 
 function renderActiveStorms() {
-    // 1. HURACÁN POLO (Pacífico Sur - Cat 4/5)
     const poloLat = 16.8;
     const poloLon = -104.2;
 
@@ -41,7 +38,6 @@ function renderActiveStorms() {
     }).addTo(appState.map);
     appState.lines.push(poloRadius);
 
-    // Cono de Incertidumbre Simétrico
     const poloConeCoords = [
         [poloLat, poloLon],
         [17.8, -105.8],
@@ -84,7 +80,6 @@ function renderActiveStorms() {
     }).addTo(appState.map);
     appState.lines.push(poloForecast);
 
-    // 2. HURACÁN ODALYS (Pacífico Abierto - Cat 1)
     const odalysLat = 22.5;
     const odalysLon = -122.0;
 
@@ -134,7 +129,7 @@ function renderActiveStorms() {
 }
 
 // =====================================================
-//  CAPAS CON LEYENDA AMIGABLE (POSICIÓN SUPERIOR)
+//  CAPAS AVANZADAS CON PATRONES REALISTAS Y ONDULADOS
 // =====================================================
 function aplicarCapaRadar(tipo) {
     if (appState.activeRadarLayer) {
@@ -148,33 +143,75 @@ function aplicarCapaRadar(tipo) {
 
     let tituloLeyenda = "";
     let htmlLeyenda = "";
+    const groupLayers = [];
 
     if (tipo === 'infrarrojo') {
-        appState.activeRadarLayer = L.layerGroup([
-            L.rectangle([[5.0, -135.0], [32.0, -85.0]], { color: '#9333ea', weight: 0, fillColor: '#a855f7', fillOpacity: 0.25 }),
-            L.rectangle([[12.0, -115.0], [25.0, -95.0]], { color: '#7e22ce', weight: 0, fillColor: '#c084fc', fillOpacity: 0.35 })
-        ]).addTo(appState.map);
-
-        tituloLeyenda = "🛰️ Nubes y Tormentas";
-        htmlLeyenda = '<div style="font-size:11px; line-height:1.4;"><b>Morado/Claro:</b> Carga nubosa densa<br><b>Blanco central:</b> Zona de tormenta severa</div>';
+        tituloLeyenda = "🛰️ Bandas Nubosas e Infrarrojo";
+        htmlLeyenda = '<div style="font-size:11px; line-height:1.4;"><b>Espiral Morada:</b> Núcleo nuboso denso<br><b>Anillos difusos:</b> Humedad convectiva superior</div>';
+        
+        // Simulación de bandas nubosas espirales con círculos concéntricos difusos
+        for (let r = 0.5; r <= 3.0; r += 0.5) {
+            groupLayers.push(L.circle([16.8, -104.2], {
+                color: '#c084fc',
+                weight: 1,
+                dashArray: '8, 8',
+                fillColor: '#a855f7',
+                fillOpacity: 0.08 * (4 - r),
+                radius: r * 70000
+            }));
+        }
     } else if (tipo === 'vientos') {
-        appState.activeRadarLayer = L.layerGroup([
-            L.rectangle([[8.0, -130.0], [30.0, -90.0]], { color: '#0284c7', weight: 0, fillColor: '#38bdf8', fillOpacity: 0.2 })
-        ]).addTo(appState.map);
-
-        tituloLeyenda = "💨 Intensidad del Viento";
-        htmlLeyenda = '<div style="font-size:11px; line-height:1.4;"><b>Celeste:</b> Vientos moderados<br><b>Azul fuerte:</b> Rachas de huracán</div>';
+        tituloLeyenda = "💨 Líneas de Viento y Corrientes";
+        htmlLeyenda = '<div style="font-size:11px; line-height:1.4;"><b>Líneas Onduladas:</b> Vectores de flujo ciclónico<br><b>Azul intenso:</b> Rachas huracanadas de fuerza</div>';
+        
+        // Generación de líneas onduladas simulando el flujo de viento en espiral
+        const centroLat = 16.8;
+        const centroLon = -104.2;
+        for (let i = 0; i < 12; i++) {
+            let anguloOffset = (i * Math.PI) / 6;
+            let ondaCoords = [];
+            for (let d = 0.5; d <= 4.0; d += 0.4) {
+                let lat = centroLat + (d * 0.8) * Math.sin(anguloOffset + d);
+                let lon = centroLon + (d * 1.2) * Math.cos(anguloOffset + d);
+                ondaCoords.push([lat, lon]);
+            }
+            groupLayers.push(L.polyline(ondaCoords, {
+                color: i % 2 === 0 ? '#38bdf8' : '#0284c7',
+                weight: 2.5,
+                smoothFactor: 1.5,
+                opacity: 0.75
+            }));
+        }
     } else if (tipo === 'precipitacion') {
-        appState.activeRadarLayer = L.layerGroup([
-            L.rectangle([[14.0, -110.0], [21.0, -100.0]], { color: '#16a34a', weight: 0, fillColor: '#22c55e', fillOpacity: 0.3 }),
-            L.rectangle([[15.5, -106.0], [18.0, -102.0]], { color: '#dc2626', weight: 0, fillColor: '#ef4444', fillOpacity: 0.45 })
-        ]).addTo(appState.map);
-
-        tituloLeyenda = "🌧️ Lluvias y Aguaceros";
-        htmlLeyenda = '<div style="font-size:11px; line-height:1.4;"><b>Verde:</b> Lluvia ligera o moderada<br><b>Rojo:</b> Lluvias torrenciales (Peligro)</div>';
+        tituloLeyenda = "🌧️ Núcleos de Precipitación";
+        htmlLeyenda = '<div style="font-size:11px; line-height:1.4;"><b>Verde/Amarillo:</b> Lluvia moderada<br><b>Rojo/Naranja:</b> Celdas convectivas y tormenta severa</div>';
+        
+        // Bandas de lluvia organizadas alrededor del ojo
+        groupLayers.push(L.circle([16.8, -104.2], {
+            color: '#22c55e',
+            weight: 2,
+            fillColor: '#22c55e',
+            fillOpacity: 0.35,
+            radius: 120000
+        }));
+        groupLayers.push(L.circle([17.2, -103.5], {
+            color: '#ef4444',
+            weight: 2,
+            fillColor: '#ef4444',
+            fillOpacity: 0.5,
+            radius: 60000
+        }));
+        groupLayers.push(L.circle([16.0, -105.5], {
+            color: '#f59e0b',
+            weight: 2,
+            fillColor: '#f59e0b',
+            fillOpacity: 0.4,
+            radius: 90000
+        }));
     }
 
-    // Colocar la leyenda en la esquina superior izquierda para no tapar los controles inferiores
+    appState.activeRadarLayer = L.layerGroup(groupLayers).addTo(appState.map);
+
     const LegendControl = L.Control.extend({
         options: { position: 'topleft' },
         onAdd: function (map) {
@@ -193,7 +230,6 @@ function aplicarCapaRadar(tipo) {
     appState.legendControl = new LegendControl();
     appState.map.addControl(appState.legendControl);
 
-    // Regresar a la pestaña de trayectoria
     document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
     document.querySelectorAll('.weather-panel').forEach(p => p.classList.remove('active'));
     
