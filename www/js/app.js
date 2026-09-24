@@ -17,8 +17,8 @@ function initMap() {
         zoomControl: false
     }).setView([20.0, -100.0], 5);
 
-    // Mapa base clásico OpenStreetMap limpio
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/*.png', {
+    // Corrección de la URL del mapa base OpenStreetMap (¡Restaurado con éxito!)
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         maxZoom: 18,
         attribution: '&copy; OpenStreetMap contributors'
     }).addTo(appState.map);
@@ -134,7 +134,7 @@ function renderActiveStorms() {
 }
 
 // =====================================================
-//  CAPAS CON LEYENDA AMIGABLE PARA TODO PÚBLICO
+//  CAPAS CON LEYENDA AMIGABLE (POSICIÓN SUPERIOR)
 // =====================================================
 function aplicarCapaRadar(tipo) {
     if (appState.activeRadarLayer) {
@@ -174,18 +174,18 @@ function aplicarCapaRadar(tipo) {
         htmlLeyenda = '<div style="font-size:11px; line-height:1.4;"><b>Verde:</b> Lluvia ligera o moderada<br><b>Rojo:</b> Lluvias torrenciales (Peligro)</div>';
     }
 
-    // Crear la tarjeta de leyenda flotante en el mapa
+    // Colocar la leyenda en la esquina superior izquierda para no tapar los controles inferiores
     const LegendControl = L.Control.extend({
-        options: { position: 'bottomleft' },
+        options: { position: 'topleft' },
         onAdd: function (map) {
             const div = L.DomUtil.create('div', 'info-legend');
-            div.style.background = 'rgba(15, 23, 42, 0.9)';
+            div.style.background = 'rgba(15, 23, 42, 0.95)';
             div.style.color = '#fff';
             div.style.padding = '10px 14px';
             div.style.borderRadius = '8px';
-            div.style.boxShadow = '0 4px 6px rgba(0,00,0,0.3)';
-            div.style.border = '1px solid rgba(255,255,255,0.1)';
-            div.innerHTML = `<b style="color: #f59e0b; font-size:12px;">${tituloLeyenda}</b><hr style="border:0; border-top:1px solid rgba(255,255,255,0.2); margin:4px 0;">${htmlLeyenda}`;
+            div.style.boxShadow = '0 4px 6px rgba(0,0,0,0.4)';
+            div.style.border = '1px solid rgba(255,255,255,0.15)';
+            div.innerHTML = `<div style="display:flex; justify-content:space-between; align-items:center;"><b style="color: #f59e0b; font-size:12px;">${tituloLeyenda}</b><button onclick="this.parentElement.parentElement.remove()" style="background:none; border:none; color:#aaa; font-size:14px; cursor:pointer; margin-left:8px;">&times;</button></div><hr style="border:0; border-top:1px solid rgba(255,255,255,0.2); margin:4px 0;">${htmlLeyenda}`;
             return div;
         }
     });
@@ -193,7 +193,7 @@ function aplicarCapaRadar(tipo) {
     appState.legendControl = new LegendControl();
     appState.map.addControl(appState.legendControl);
 
-    // Regresar a la pestaña de trayectoria para ver el mapa
+    // Regresar a la pestaña de trayectoria
     document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
     document.querySelectorAll('.weather-panel').forEach(p => p.classList.remove('active'));
     
