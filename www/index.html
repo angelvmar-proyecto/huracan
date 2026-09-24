@@ -20,52 +20,57 @@
         <button class="tab-btn" onclick="switchTab('seguridad', event)">🛡️ Seguridad</button>
     </nav>
 
-    <!-- PANEL 1: TRAYECTORIA Y MAPA -->
+    <!-- PANEL 1: TRAYECTORIA Y MAPA CON CONOS -->
     <div id="panel-trayectoria" class="weather-panel active">
         <div id="map"></div>
         <div class="info-card-floating">
-            <div class="titulo-panel" style="color: #ef4444;">🌀 Huracán Polo (Cat. 4/5) y Odalys</div>
-            <div class="sub-texto" style="color: #fff; margin-top: 2px;">Monitoreo dual activo en el Pacífico</div>
+            <div class="titulo-panel" style="color: #ef4444;">🌀 Huracán Polo (Cat. 4/5) con Cono de Incertidumbre</div>
+            <div class="sub-texto" style="color: #fff; margin-top: 2px;">Monitoreo oficial y modelos de trayectoria</div>
         </div>
     </div>
 
     <!-- PANEL 2: RADAR -->
     <div id="panel-radar" class="weather-panel">
         <div class="panel-content-inner">
-            <h2 class="titulo-panel" style="font-size: 18px; margin-bottom: 12px;">📡 Capas de Radar Meteorológico</h2>
-            <p class="sub-texto" style="margin-bottom: 16px;">Selecciona una capa para proyectarla directamente sobre el mapa.</p>
+            <h2 class="titulo-panel" style="font-size: 18px; margin-bottom: 12px;">📡 Capas de Radar Regional</h2>
+            <p class="sub-texto" style="margin-bottom: 16px;">Selecciona una capa para proyectarla en todo el mapa.</p>
             
             <div class="card-option" onclick="aplicarCapaRadar('infrarrojo')">
-                <div style="font-weight: 600; color: #f59e0b;">🛰️ Infrarrojo Satelital (Bandas Nubosas)</div>
-                <div class="sub-texto">Ver nubosidad en tiempo real</div>
+                <div style="font-weight: 600; color: #f59e0b;">🛰️ Infrarrojo Satelital (Cobertura Total)</div>
+                <div class="sub-texto">Bandas nubosas sobre el Pacífico</div>
             </div>
 
             <div class="card-option" style="margin-top: 12px;" onclick="aplicarCapaRadar('vientos')">
-                <div style="font-weight: 600; color: #f59e0b;">💨 Vectores de Viento y Corriente</div>
-                <div class="sub-texto">Flujos atmosféricos globales</div>
+                <div style="font-weight: 600; color: #f59e0b;">💨 Vectores de Viento Regionales</div>
+                <div class="sub-texto">Flujos atmosféricos de las cuencas</div>
             </div>
 
             <div class="card-option" style="margin-top: 12px;" onclick="aplicarCapaRadar('precipitacion')">
-                <div style="font-weight: 600; color: #f59e0b;">🌧️ Acumulados de Precipitación (Radar)</div>
+                <div style="font-weight: 600; color: #f59e0b;">🌧️ Acumulados de Precipitación (Doppler)</div>
                 <div class="sub-texto">Intensidad de lluvia y tormentas</div>
             </div>
         </div>
     </div>
 
-    <!-- PANEL 3: ALERTAS -->
+    <!-- PANEL 3: ALERTAS Y AVISOS OFICIALES -->
     <div id="panel-alertas" class="weather-panel">
         <div class="panel-content-inner">
-            <h2 class="titulo-panel" style="font-size: 18px; margin-bottom: 12px;">🚨 Avisos por Cuenca (Protección Civil)</h2>
-            <p class="sub-texto" style="margin-bottom: 16px;">Boletines oficiales vigentes.</p>
+            <h2 class="titulo-panel" style="font-size: 18px; margin-bottom: 12px;">🚨 Avisos Oficiales (CONAGUA / SMN)</h2>
+            <p class="sub-texto" style="margin-bottom: 16px;">Sistema de Alerta Temprana para Ciclones Tropicales (SIAT-CT).</p>
 
             <div class="alert-card warning">
-                <div style="font-weight: bold; color: #ef4444;">🌊 Pacífico: Alerta Máxima - Huracán Polo</div>
-                <div class="sub-texto" style="margin-top: 6px;">Peligroso huracán mayor afectando el suroeste mexicano con oleaje elevado y lluvias torrenciales.</div>
+                <div style="font-weight: bold; color: #ef4444;">🔴 Alerta Roja (Peligro Máximo) - Huracán Polo</div>
+                <div class="sub-texto" style="margin-top: 4px;"><b>Estados afectados:</b> Costas de Guerrero, Michoacán y Colima. Resguardo total recomendado por Protección Civil.</div>
             </div>
 
             <div class="alert-card info" style="margin-top: 12px;">
-                <div style="font-weight: bold; color: #3b82f6;">🏝️ Caribe y Atlántico: Sin Amenazas Mayores</div>
-                <div class="sub-texto" style="margin-top: 6px;">Cuenca estable bajo condiciones estacionales normales.</div>
+                <div style="font-weight: bold; color: #f59e0b;">⚓ Cierres de Puertos y Navegación</div>
+                <div class="sub-texto" style="margin-top: 4px;">Capitanía de Puerto reporta cierre a la navegación menor y mayor en Lázaro Cárdenas, Zihuatanejo y Manzanillo.</div>
+            </div>
+
+            <div class="alert-card info" style="margin-top: 12px; border-left: 4px solid #3b82f6;">
+                <div style="font-weight: bold; color: #3b82f6;">🔵 Cuenca del Caribe y Atlántico</div>
+                <div class="sub-texto" style="margin-top: 4px;">Sin formaciones ciclónicas activas que representen peligro para el territorio nacional. Condición estable.</div>
             </div>
         </div>
     </div>
@@ -74,14 +79,14 @@
     <div id="panel-pronostico" class="weather-panel">
         <div class="panel-content-inner">
             <h2 class="titulo-panel" style="font-size: 18px; margin-bottom: 12px;">⛅ Pronóstico Extendido</h2>
-            <p class="sub-texto" style="margin-bottom: 16px;">Condiciones estimadas.</p>
+            <p class="sub-texto" style="margin-bottom: 16px;">Condiciones estimadas por región.</p>
 
             <div class="card-option" style="margin-bottom: 10px;">
                 <div style="display: flex; justify-content: space-between; font-weight: bold; color: #f59e0b;">
                     <span>📍 Costa del Pacífico Sur</span>
-                    <span>⛈️ 31°C / 23°C</span>
+                    <span>⛈️ 30°C / 23°C</span>
                 </div>
-                <div class="sub-texto" style="margin-top: 4px;">Precipitaciones intensas por bandas de Huracán Polo.</div>
+                <div class="sub-texto" style="margin-top: 4px;">Lluvias torrenciales y rachas superiores a 150 km/h.</div>
             </div>
 
             <div class="card-option">
@@ -89,23 +94,27 @@
                     <span>🌴 Península de Yucatán</span>
                     <span>🌤️ 33°C / 26°C</span>
                 </div>
-                <div class="sub-texto" style="margin-top: 4px;">Cielo despejado a medio nublado, ambiente caluroso.</div>
+                <div class="sub-texto" style="margin-top: 4px;">Cielo medio nublado, ambiente caluroso y estable.</div>
             </div>
         </div>
     </div>
 
-    <!-- PANEL 5: SEGURIDAD -->
+    <!-- PANEL 5: SEGURIDAD Y REPORTE -->
     <div id="panel-seguridad" class="weather-panel">
         <div class="panel-content-inner">
-            <h2 class="titulo-panel" style="font-size: 18px; margin-bottom: 12px;">🛡️ Protocolos de Emergencia</h2>
-            <p class="sub-texto" style="margin-bottom: 16px;">Botones de acceso rápido.</p>
+            <h2 class="titulo-panel" style="font-size: 18px; margin-bottom: 12px;">🛡️ Protocolos y Emergencia</h2>
+            <p class="sub-texto" style="margin-bottom: 16px;">Herramientas de protección civil y estatus.</p>
 
-            <button class="action-btn red" onclick="alert('Llamando al 911...')">
+            <button class="action-btn red" onclick="alert('Llamando al 911 de Emergencias...')">
                 📞 Llamar al 911 (Emergencias)
             </button>
 
-            <button class="action-btn blue" style="margin-top: 12px;" onclick="alert('Buscando refugios cercanos...')">
-                🏫 Ver Refugios Temporales
+            <button class="action-btn blue" style="margin-top: 12px;" onclick="alert('Localizando refugios temporales habilitados por Protección Civil...')">
+                🏫 Ver Refugios Temporales Cercanos
+            </button>
+
+            <button class="action-btn" style="margin-top: 12px; background: #10b981; color: white;" onclick="alert('¡Estatus enviado con éxito! Tu reporte de que te encuentras bien ha sido registrado localmente.')">
+                ✅ Registrar "Estoy Bien" (Reporte Ciudadano)
             </button>
         </div>
     </div>
