@@ -28,11 +28,13 @@ function initMap() {
 }
 
 function renderActiveStorms() {
+    // ---------------------------------------------------------
     // 1. HURACÁN POLO (Pacífico Sur - Cat 4/5)
+    // ---------------------------------------------------------
     const poloLat = 16.8;
     const poloLon = -104.2;
 
-    // Radio de vientos de huracán
+    // Radio de vientos actuales
     const poloRadius = L.circle([poloLat, poloLon], {
         color: '#ef4444',
         fillColor: '#ef4444',
@@ -41,17 +43,22 @@ function renderActiveStorms() {
     }).addTo(appState.map);
     appState.lines.push(poloRadius);
 
-    // Cono de Incertidumbre / Probabilidad de Trayectoria (Polígono de desviación)
-    const poloCone = L.polygon([
-        [poloLat, poloLon],
-        [17.5, -105.5],
-        [21.5, -111.0],
-        [19.0, -108.5]
-    ], {
+    // Cono de Incertidumbre Simétrico y Bidireccional (Se ensancha desde el ojo del huracán)
+    // Coordenadas estructuradas en abanico (lado izquierdo y derecho del pronóstico)
+    const poloConeCoords = [
+        [poloLat, poloLon],                  // Vértice inicial (Ojo actual)
+        [17.8, -105.8],                      // Límite norte a 24h
+        [21.2, -112.0],                      // Límite norte a 72h (Amplio)
+        [19.8, -113.5],                      // Extremo superior exterior final
+        [18.2, -111.0],                      // Límite sur a 72h
+        [16.5, -106.8]                       // Límite sur a 24h
+    ];
+
+    const poloCone = L.polygon(poloConeCoords, {
         color: '#f59e0b',
         weight: 1,
         fillColor: '#f59e0b',
-        fillOpacity: 0.25,
+        fillOpacity: 0.22,
         dashArray: '4, 4'
     }).addTo(appState.map);
     appState.lines.push(poloCone);
@@ -68,10 +75,12 @@ function renderActiveStorms() {
         .bindPopup("<b>🌀 Huracán Polo (Cat. 4/5)</b><br>Vientos: ~260 km/h<br>SIAT-CT: Alerta Roja (Peligro Máximo)");
     appState.markers.push(poloMarker);
 
+    // Línea central de trayectoria pronosticada
     const poloForecast = L.polyline([
         [poloLat, poloLon],
         [18.5, -106.5],
-        [20.2, -109.0]
+        [20.2, -109.0],
+        [22.0, -112.5]
     ], {
         color: '#ffffff',
         weight: 3,
@@ -79,20 +88,28 @@ function renderActiveStorms() {
     }).addTo(appState.map);
     appState.lines.push(poloForecast);
 
+
+    // ---------------------------------------------------------
     // 2. HURACÁN ODALYS (Pacífico Abierto - Cat 1)
+    // ---------------------------------------------------------
     const odalysLat = 22.5;
     const odalysLon = -122.0;
 
-    const odalysCone = L.polygon([
+    // Cono de Incertidumbre Simétrico para Odalys
+    const odalysConeCoords = [
         [odalysLat, odalysLon],
-        [23.0, -124.0],
-        [26.5, -130.0],
-        [24.0, -127.0]
-    ], {
+        [23.5, -123.5],
+        [27.0, -131.0],
+        [25.5, -132.5],
+        [24.0, -129.0],
+        [21.5, -124.0]
+    ];
+
+    const odalysCone = L.polygon(odalysConeCoords, {
         color: '#3b82f6',
         weight: 1,
         fillColor: '#3b82f6',
-        fillOpacity: 0.2,
+        fillOpacity: 0.18,
         dashArray: '4, 4'
     }).addTo(appState.map);
     appState.lines.push(odalysCone);
@@ -112,7 +129,8 @@ function renderActiveStorms() {
     const odalysForecast = L.polyline([
         [odalysLat, odalysLon],
         [23.8, -125.0],
-        [25.0, -128.5]
+        [25.0, -128.5],
+        [26.2, -131.5]
     ], {
         color: '#ffffff',
         weight: 3,
@@ -132,7 +150,6 @@ function aplicarCapaRadar(tipo) {
         appState.activeRadarLayer = null;
     }
 
-    // Usar rectángulos de cobertura regional amplia que cubren todo el mapa/océanos
     if (tipo === 'infrarrojo') {
         appState.activeRadarLayer = L.layerGroup([
             L.rectangle([[5.0, -135.0], [32.0, -85.0]], { color: '#9333ea', weight: 0, fillColor: '#a855f7', fillOpacity: 0.25 }),
@@ -152,7 +169,6 @@ function aplicarCapaRadar(tipo) {
         alert("🌧️ Capa de Precipitación y Radares Doppler activa.");
     }
 
-    // Regresar a la pestaña de trayectoria
     document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
     document.querySelectorAll('.weather-panel').forEach(p => p.classList.remove('active'));
     
