@@ -10,30 +10,30 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 function initMap() {
-    // Centrado estratégico en México para mostrar tanto el Pacífico como el Golfo/Caribe
+    // Centrado estratégico en México para mostrar Pacífico y Caribe
     appState.map = L.map('map', {
         zoomControl: false
     }).setView([20.0, -100.0], 5);
 
-    // Mapa base limpio con ciudades, nombres y divisiones políticas claras (CartoDB Positron o similar limpio)
-    L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+    // Mapa base clásico OpenStreetMap (Limpio, con ciudades, nombres y divisiones sin marcas invasivas)
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         maxZoom: 18,
-        attribution: '&copy; OpenStreetMap contributors & CARTO'
+        attribution: '&copy; OpenStreetMap contributors'
     }).addTo(appState.map);
 
     // Controles de zoom táctiles arriba a la derecha
     L.control.zoom({ position: 'topright' }).addTo(appState.map);
 
-    // Renderizar huracán Polo en el Pacífico (Cat 5) y posición de vigilancia
+    // Renderizar Huracán Polo en el Pacífico (Cat 5)
     renderActiveHurricanes();
 }
 
 function renderActiveHurricanes() {
-    // Coordenadas reales recientes de Huracán Polo (Pacífico mexicano)
+    // Coordenadas de Huracán Polo (Pacífico mexicano)
     const poloLat = 16.8;
     const poloLon = -104.2;
 
-    // Círculo de afectación de Polo
+    // Círculo de afectación
     L.circle([poloLat, poloLon], {
         color: '#ef4444',
         fillColor: '#ef4444',
@@ -41,7 +41,7 @@ function renderActiveHurricanes() {
         radius: 200000
     }).addTo(appState.map);
 
-    // Icono destacado de Huracán Mayor (Cat 5)
+    // Marcador del huracán
     const poloIcon = L.divIcon({
         className: 'custom-storm-marker',
         html: '<div style="background: #ef4444; color: white; width: 38px; height: 38px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 18px; box-shadow: 0 0 15px rgba(239,68,68,0.9); border: 2px solid #fff;">🌀</div>',
@@ -54,7 +54,7 @@ function renderActiveHurricanes() {
         .bindPopup("<b>🌀 Huracán Polo (Categoría 5)</b><br>Vientos: 260 km/h<br>Ubicación: Suroeste de México (Pacífico)")
         .openPopup();
 
-    // Línea de trayectoria pronosticada hacia el Nor-Noroeste
+    // Línea de trayectoria pronosticada
     const forecastCoords = [
         [poloLat, poloLon],
         [18.5, -106.5],
