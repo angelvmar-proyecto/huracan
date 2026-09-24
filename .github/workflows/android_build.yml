@@ -31,6 +31,12 @@ jobs:
       - name: Sync Capacitor
         run: npx cap sync android
 
+      - name: Fix Java Version in Gradle
+        run: |
+          sed -i 's/sourceCompatibility JavaVersion.VERSION_21/sourceCompatibility JavaVersion.VERSION_17/g' android/app/build.gradle || true
+          sed -i 's/targetCompatibility JavaVersion.VERSION_21/targetCompatibility JavaVersion.VERSION_17/g' android/app/build.gradle || true
+          sed -i "s/java 21/java 17/g" android/app/build.gradle || true
+
       - name: Build APK
         run: |
           cd android
