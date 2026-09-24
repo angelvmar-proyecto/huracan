@@ -92,3 +92,57 @@ body, html {
     color: #9ca3af;
     margin-top: 4px;
 }
+
+.panel-content-inner {
+    padding: 70px 16px 20px 16px;
+}
+
+.card-option, .alert-card {
+    background: #121826;
+    border: 1px solid rgba(245, 158, 11, 0.2);
+    padding: 14px;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.card-option:active {
+    background: #1f293d;
+}
+
+.alert-card.warning {
+    border-color: rgba(239, 68, 68, 0.4);
+    background: rgba(239, 68, 68, 0.05);
+}
+
+.alert-card.info {
+    border-color: rgba(59, 130, 246, 0.4);
+    background: rgba(59, 130, 246, 0.05);
+}
+
+.action-btn {
+    width: 100%;
+    padding: 14px;
+    border: none;
+    border-radius: 12px;
+    font-weight: bold;
+    font-size: 14px;
+    cursor: pointer;
+    text-align: center;
+}
+
+.action-btn.red {
+    background: #ef4444;
+    color: white;
+}
+
+.action-btn.blue {
+    background: #3b82f6;
+    color: white;
+}
+
+.action-btn.dark {
+    background: #1f293d;
+    color: #f59e0b;
+    border: 1px solid rgba(245, 158, 11, 0.3);
+}

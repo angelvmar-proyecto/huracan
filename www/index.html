@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>🌊 Huracanes MX Pro</title>
     <!-- Leaflet CSS -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
@@ -29,26 +29,69 @@
     </div>
 
     <!-- PANEL 2: RADAR -->
-    <div id="panel-radar" class="weather-panel" style="padding: 60px 16px;">
-        <h2 style="color: #d4a843; font-size: 18px;">📡 Capas de Radar Meteorológico</h2>
-        <p class="sub-texto" style="margin-top: 8px;">Visualización de precipitaciones en alta resolución.</p>
+    <div id="panel-radar" class="weather-panel">
+        <div class="panel-content-inner">
+            <h2 class="titulo-panel" style="font-size: 18px; margin-bottom: 12px;">📡 Capas de Radar Meteorológico</h2>
+            <p class="sub-texto" style="margin-bottom: 16px;">Visualización de precipitaciones y bandas nubosas en alta resolución.</p>
+            
+            <div class="card-option" onclick="alert('Cargando capa de Infrarrojo satelital...')">
+                <div style="font-weight: 600; color: #f59e0b;">🛰️ Infrarrojo Satelital GOES-16</div>
+                <div class="sub-texto">Actualizado hace 5 minutos</div>
+            </div>
+
+            <div class="card-option" style="margin-top: 12px;" onclick="alert('Cargando capa de Vientos y Oleaje...')">
+                <div style="font-weight: 600; color: #f59e0b;">💨 Vectores de Viento y Oleaje</div>
+                <div class="sub-texto">Modelo GFS / NOAA</div>
+            </div>
+
+            <div class="card-option" style="margin-top: 12px;" onclick="alert('Cargando acumulados de lluvia...')">
+                <div style="font-weight: 600; color: #f59e0b;">🌧️ Acumulados de Precipitación (24h)</div>
+                <div class="sub-texto">Estimación por radar Doppler</div>
+            </div>
+        </div>
     </div>
 
     <!-- PANEL 3: ALERTAS -->
-    <div id="panel-alertas" class="weather-panel" style="padding: 60px 16px;">
-        <h2 style="color: #d4a843; font-size: 18px;">🚨 Avisos y Protección Civil</h2>
-        <p class="sub-texto" style="margin-top: 8px;">Boletines oficiales actualizados al momento.</p>
+    <div id="panel-alertas" class="weather-panel">
+        <div class="panel-content-inner">
+            <h2 class="titulo-panel" style="font-size: 18px; margin-bottom: 12px;">🚨 Avisos y Protección Civil</h2>
+            <p class="sub-texto" style="margin-bottom: 16px;">Boletines oficiales actualizados al momento.</p>
+
+            <div class="alert-card warning">
+                <div style="font-weight: bold; color: #ef4444;">⚠️ Alerta Naranja - Vigilancia Tropical</div>
+                <div class="sub-texto" style="margin-top: 6px;">Se mantiene zona de vigilancia por baja presión con potencial ciclónico en el Caribe mexicano. Se recomienda extremar precauciones a la navegación marítima.</div>
+            </div>
+
+            <div class="alert-card info" style="margin-top: 12px;">
+                <div style="font-weight: bold; color: #3b82f6;">ℹ️ Aviso Preventivo</div>
+                <div class="sub-texto" style="margin-top: 6px;">Oleaje elevado de 2 a 4 metros en costas de la península. Monitoreo constante de trayectoria.</div>
+            </div>
+        </div>
     </div>
 
     <!-- PANEL 4: SEGURIDAD -->
-    <div id="panel-seguridad" class="weather-panel" style="padding: 60px 16px;">
-        <h2 style="color: #d4a843; font-size: 18px;">🛡️ Protocolos de Emergencia</h2>
-        <p class="sub-texto" style="margin-top: 8px;">Botones de acceso rápido y refugios cercanos.</p>
+    <div id="panel-seguridad" class="weather-panel">
+        <div class="panel-content-inner">
+            <h2 class="titulo-panel" style="font-size: 18px; margin-bottom: 12px;">🛡️ Protocolos de Emergencia</h2>
+            <p class="sub-texto" style="margin-bottom: 16px;">Botones de acceso rápido y refugios cercanos.</p>
+
+            <button class="action-btn red" onclick="alert('Llamando a Emergencias 911...')">
+                📞 Llamar al 911 (Emergencias)
+            </button>
+
+            <button class="action-btn blue" style="margin-top: 12px;" onclick="alert('Buscando refugios temporales habilitados en la región...')">
+                🏫 Ver Refugios Temporales Cercanos
+            </button>
+
+            <button class="action-btn dark" style="margin-top: 12px;" onclick="alert('Kit de emergencia: Linterna, documentos en bolsa hermómetica, agua y víveres.')">
+                🎒 Consultar Kit de Supervivencia
+            </button>
+        </div>
     </div>
 
     <!-- Leaflet JS -->
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-    <!-- Lógica Pro Custom -->
+    <!-- App JS -->
     <script src="js/app.js"></script>
 </body>
 </html>
