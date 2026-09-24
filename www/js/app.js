@@ -18,6 +18,7 @@ function initMap() {
         zoomControl: false
     }).setView([20.0, -100.0], 5);
 
+    // Mapa base limpio
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         maxZoom: 18,
         attribution: '&copy; OpenStreetMap contributors'
@@ -29,109 +30,116 @@ function initMap() {
 }
 
 function renderActiveStorms() {
+    // ---------------------------------------------------------
+    // 1. HURACÁN POLO (Pacífico Sur - Cat 4/5)
+    // ---------------------------------------------------------
     const poloLat = 16.8;
     const poloLon = -104.2;
 
-    const poloRadius = L.circle([poloLat, poloLon], {
-        color: '#ef4444',
-        fillColor: '#ef4444',
-        fillOpacity: 0.15,
-        radius: 220000
-    }).addTo(appState.map);
-    appState.lines.push(poloRadius);
-
+    // Cono de Incertidumbre Oficial (Polígono amplio y simétrico que engloba la trayectoria)
     const poloConeCoords = [
         [poloLat, poloLon],
-        [17.8, -105.8],
-        [21.2, -112.0],
-        [19.8, -113.5],
-        [18.2, -111.0],
-        [16.5, -106.8]
+        [17.5, -105.8],
+        [20.5, -111.5],
+        [23.0, -116.0],
+        [21.0, -117.5],
+        [18.5, -112.0],
+        [16.2, -107.0]
     ];
 
     const poloCone = L.polygon(poloConeCoords, {
-        color: '#f59e0b',
-        weight: 1,
-        fillColor: '#f59e0b',
-        fillOpacity: 0.22,
-        dashArray: '4, 4'
+        color: '#dc2626',
+        weight: 1.5,
+        fillColor: '#ef4444',
+        fillOpacity: 0.2,
+        dashArray: '5, 5'
     }).addTo(appState.map);
     appState.lines.push(poloCone);
 
+    // Trayectoria central exacta alineada dentro del cono
+    const poloTrajectoryCoords = [
+        [poloLat, poloLon],
+        [17.6, -106.2],
+        [19.2, -109.0],
+        [21.5, -113.8]
+    ];
+
+    const poloForecast = L.polyline(poloTrajectoryCoords, {
+        color: '#dc2626',
+        weight: 4,
+        opacity: 0.9
+    }).addTo(appState.map);
+    appState.lines.push(poloForecast);
+
+    // Puntos secuenciales institucionales sobre la trayectoria (M, H, T...)
+    const puntosSecuenciales = [
+        { lat: 17.6, lon: -106.2, label: 'M' },
+        { lat: 19.2, lon: -109.0, label: 'H' },
+        { lat: 21.5, lon: -113.8, label: 'T' }
+    ];
+
+    puntosSecuenciales.forEach(pt => {
+        const seqIcon = L.divIcon({
+            className: 'sequential-marker',
+            html: `<div style="background: white; color: #dc2626; width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: bold; border: 2px solid #dc2626; box-shadow: 0 2px 4px rgba(0,0,0,0.3);">${pt.label}</div>`,
+            iconSize: [26, 26],
+            iconAnchor: [13, 13]
+        });
+        const markerSeq = L.marker([pt.lat, pt.lon], { icon: seqIcon }).addTo(appState.map);
+        appState.markers.push(markerSeq);
+    });
+
+    // Zona de vigilancia / probabilidad baja adicional (como los polígonos verdes del SMN)
+    const zonaVigilanciaCoords = [
+        [12.5, -115.0],
+        [14.0, -100.0],
+        [17.0, -98.0],
+        [13.5, -112.0]
+    ];
+    const zonaVigilancia = L.polygon(zonaVigilanciaCoords, {
+        color: '#eab308',
+        weight: 2,
+        fillColor: '#22c55e',
+        fillOpacity: 0.25,
+        dashArray: '6, 6'
+    }).addTo(appState.map);
+    appState.lines.push(zonaVigilancia);
+
+    // Marcador principal de Huracán Polo (Cat 4/5)
     const poloIcon = L.divIcon({
         className: 'custom-storm-marker',
-        html: '<div style="background: #ef4444; color: white; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 18px; box-shadow: 0 0 15px rgba(239,68,68,0.9); border: 2px solid #fff;">🌀</div>',
-        iconSize: [40, 40],
-        iconAnchor: [20, 20]
+        html: '<div style="background: #dc2626; color: white; width: 38px; height: 38px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 16px; font-weight: bold; box-shadow: 0 0 12px rgba(220,38,38,0.9); border: 2px solid #fff;">4</div>',
+        iconSize: [38, 38],
+        iconAnchor: [19, 19]
     });
 
     const poloMarker = L.marker([poloLat, poloLon], { icon: poloIcon })
         .addTo(appState.map)
-        .bindPopup("<b>🌀 Huracán Polo (Cat. 4/5)</b><br>Vientos: ~260 km/h<br>SMN/CONAGUA: Alerta de impacto en litoral del Pacífico");
+        .bindPopup("<b>🌀 Huracán Polo (Cat. 4/5)</b><br>Vientos: ~260 km/h<br>SMN/CONAGUA: Impacto potencial en litoral");
     appState.markers.push(poloMarker);
-
-    const poloForecast = L.polyline([
-        [poloLat, poloLon],
-        [18.5, -106.5],
-        [20.2, -109.0],
-        [22.0, -112.5]
-    ], {
-        color: '#ffffff',
-        weight: 3,
-        dashArray: '6, 6'
-    }).addTo(appState.map);
-    appState.lines.push(poloForecast);
-
-    const odalysLat = 22.5;
-    const odalysLon = -122.0;
-
-    const odalysConeCoords = [
-        [odalysLat, odalysLon],
-        [23.5, -123.5],
-        [27.0, -131.0],
-        [25.5, -132.5],
-        [24.0, -129.0],
-        [21.5, -124.0]
-    ];
-
-    const odalysCone = L.polygon(odalysConeCoords, {
-        color: '#3b82f6',
-        weight: 1,
-        fillColor: '#3b82f6',
-        fillOpacity: 0.18,
-        dashArray: '4, 4'
-    }).addTo(appState.map);
-    appState.lines.push(odalysCone);
-
-    const odalysIcon = L.divIcon({
-        className: 'custom-storm-marker',
-        html: '<div style="background: #3b82f6; color: white; width: 34px; height: 34px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 16px; box-shadow: 0 0 10px rgba(59,130,246,0.8); border: 2px solid #fff;">🌀</div>',
-        iconSize: [34, 34],
-        iconAnchor: [17, 17]
-    });
-
-    const odalysMarker = L.marker([odalysLat, odalysLon], { icon: odalysIcon })
-        .addTo(appState.map)
-        .bindPopup("<b>🌀 Huracán Odalys (Cat. 1)</b><br>Vientos: ~120 km/h<br>Mar abierto - Sin amenaza directa a costas");
-    appState.markers.push(odalysMarker);
-
-    const odalysForecast = L.polyline([
-        [odalysLat, odalysLon],
-        [23.8, -125.0],
-        [25.0, -128.5],
-        [26.2, -131.5]
-    ], {
-        color: '#ffffff',
-        weight: 3,
-        dashArray: '6, 6'
-    }).addTo(appState.map);
-    appState.lines.push(odalysForecast);
-
     poloMarker.openPopup();
+
+
+    // ---------------------------------------------------------
+    // 2. ZONA DE ALERTA AMARILLA / PREVENTIVA EN TIERRA
+    // ---------------------------------------------------------
+    const alertaTierraCoords = [
+        [19.0, -104.5],
+        [22.0, -108.0],
+        [20.5, -105.0],
+        [18.5, -103.0]
+    ];
+    const alertaTierra = L.polygon(alertaTierraCoords, {
+        color: '#eab308',
+        weight: 2,
+        fillColor: '#facc15',
+        fillOpacity: 0.3
+    }).addTo(appState.map);
+    appState.lines.push(alertaTierra);
 }
 
 // =====================================================
-//  CAPAS VISUALES CON ICONOS ILUSTRATIVOS CLAROS
+//  CAPAS VISUALES CON ICONOS INSTITUCIONALES CLAROS
 // =====================================================
 function aplicarCapaRadar(tipo) {
     if (appState.activeRadarLayer) {
@@ -146,67 +154,44 @@ function aplicarCapaRadar(tipo) {
     let tituloLeyenda = "";
     let htmlLeyenda = "";
     const groupLayers = [];
-
-    // Coordenadas estratégicas para colocar los iconos ilustrativos en el mapa
     const puntosInteres = [
         { lat: 17.5, lon: -103.5 },
         { lat: 18.5, lon: -105.5 },
-        { lat: 15.5, lon: -102.0 },
-        { lat: 19.2, lon: -107.0 }
+        { lat: 20.0, lon: -108.0 }
     ];
 
     if (tipo === 'infrarrojo') {
         tituloLeyenda = "🛰️ Nubes y Masas Nubosas";
-        htmlLeyenda = '<div style="font-size:11px; line-height:1.4;"><b>☁️ Iconos de Nube:</b> Indican concentración densa de humedad y tormentas activas en la región.</div>';
-        
+        htmlLeyenda = '<div style="font-size:11px; line-height:1.4;"><b>☁️ Iconos:</b> Concentración masiva de humedad y convección profunda.</div>';
         puntosInteres.forEach(pt => {
-            const nubeIcon = L.divIcon({
-                className: 'weather-emoji-icon',
+            const icono = L.divIcon({
+                className: 'weather-emoji',
                 html: '<div style="font-size: 26px; text-shadow: 0 0 8px rgba(0,0,0,0.8);">☁️⛈️</div>',
-                iconSize: [30, 30],
-                iconAnchor: [15, 15]
+                iconSize: [30, 30], iconAnchor: [15, 15]
             });
-            groupLayers.push(L.marker([pt.lat, pt.lon], { icon: nubeIcon }));
+            groupLayers.push(L.marker([pt.lat, pt.lon], { icon: icono }));
         });
     } else if (tipo === 'vientos') {
-        tituloLeyenda = "💨 Vectores e Intensidad de Viento";
-        htmlLeyenda = '<div style="font-size:11px; line-height:1.4;"><b>💨 / 🌀 Símbolos:</b> Muestran la dirección del flujo de aire y rachas fuertes en el litoral.</div>';
-        
-        // Mantenemos los vectores limpios que ya funcionaban bien y agregamos iconos de viento
-        const centroLat = 16.8;
-        const centroLon = -104.2;
-        for (let i = 0; i < 10; i++) {
-            let anguloOffset = (i * Math.PI) / 5;
-            let ondaCoords = [];
-            for (let d = 0.5; d <= 3.5; d += 0.5) {
-                let lat = centroLat + (d * 0.8) * Math.sin(anguloOffset + d);
-                let lon = centroLon + (d * 1.2) * Math.cos(anguloOffset + d);
-                ondaCoords.push([lat, lon]);
-            }
-            groupLayers.push(L.polyline(ondaCoords, { color: '#38bdf8', weight: 3, opacity: 0.8 }));
-        }
-
+        tituloLeyenda = "💨 Vectores de Viento";
+        htmlLeyenda = '<div style="font-size:11px; line-height:1.4;"><b>💨 Símbolos:</b> Dirección e intensidad de rachas ciclónicas.</div>';
         puntosInteres.forEach(pt => {
-            const vientoIcon = L.divIcon({
-                className: 'weather-emoji-icon',
-                html: '<div style="font-size: 24px; text-shadow: 0 0 8px rgba(0,0,0,0.8);">💨</div>',
-                iconSize: [30, 30],
-                iconAnchor: [15, 15]
+            const icono = L.divIcon({
+                className: 'weather-emoji',
+                html: '<div style="font-size: 26px; text-shadow: 0 0 8px rgba(0,0,0,0.8);">💨</div>',
+                iconSize: [30, 30], iconAnchor: [15, 15]
             });
-            groupLayers.push(L.marker([pt.lat, pt.lon], { icon: vientoIcon }));
+            groupLayers.push(L.marker([pt.lat, pt.lon], { icon: icono }));
         });
     } else if (tipo === 'precipitacion') {
-        tituloLeyenda = "🌧️ Zonas de Lluvia y Tormenta";
-        htmlLeyenda = '<div style="font-size:11px; line-height:1.4;"><b>🌧️ / ⛈️ Iconos de Lluvia:</b> Ubican las zonas con aguaceros fuertes y riesgo de encharcamientos.</div>';
-        
+        tituloLeyenda = "🌧️ Zonas de Precipitación";
+        htmlLeyenda = '<div style="font-size:11px; line-height:1.4;"><b>🌧️ Símbolos:</b> Aguaceros fuertes y tormentas eléctricas.</div>';
         puntosInteres.forEach(pt => {
-            const lluviaIcon = L.divIcon({
-                className: 'weather-emoji-icon',
+            const icono = L.divIcon({
+                className: 'weather-emoji',
                 html: '<div style="font-size: 26px; text-shadow: 0 0 8px rgba(0,0,0,0.8);">🌧️⚡</div>',
-                iconSize: [30, 30],
-                iconAnchor: [15, 15]
+                iconSize: [30, 30], iconAnchor: [15, 15]
             });
-            groupLayers.push(L.marker([pt.lat, pt.lon], { icon: lluviaIcon }));
+            groupLayers.push(L.marker([pt.lat, pt.lon], { icon: icono }));
         });
     }
 
@@ -240,9 +225,6 @@ function aplicarCapaRadar(tipo) {
     setTimeout(() => appState.map.invalidateSize(), 150);
 }
 
-// =====================================================
-//  CLIMA LOCAL Y ENLACES DIRECTOS A BOLETINES OFICIALES REALES
-// =====================================================
 function initLocalWeather() {
     const localContainer = document.getElementById('panel-pronostico');
     if (localContainer) {
@@ -278,7 +260,6 @@ function abrirBoletinOficial(tipo) {
     } else if (tipo === 'aviso_general') {
         urlOficial = "https://smn.conagua.gob.mx/es/";
     }
-    
     window.open(urlOficial, '_blank');
 }
 
