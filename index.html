@@ -32,52 +32,52 @@
     <!-- PANEL 2: RADAR -->
     <div id="panel-radar" class="weather-panel">
         <div class="panel-content-inner">
-            <h2 class="titulo-panel" style="font-size: 18px; margin-bottom: 12px;">📡 Capas de Radar y Clima</h2>
-            <p class="sub-texto" style="margin-bottom: 16px;">Selecciona una capa para proyectarla en el mapa.</p>
+            <h2 class="titulo-panel" style="font-size: 18px; margin-bottom: 12px;">📡 Capas Visuales de Clima</h2>
+            <p class="sub-texto" style="margin-bottom: 16px;">Selecciona una capa para ver los iconos ilustrativos en el mapa.</p>
             
             <div class="card-option" onclick="aplicarCapaRadar('infrarrojo')">
-                <div style="font-weight: 600; color: #f59e0b;">🛰️ Bandas Nubosas e Infrarrojo</div>
-                <div class="sub-texto">Patrones de humedad orgánica y cimas nubosas</div>
+                <div style="font-weight: 600; color: #f59e0b;">🛰️ Nubes y Masas Nubosas (☁️)</div>
+                <div class="sub-texto">Ubicación de humedad y tormentas con iconos claros</div>
             </div>
 
             <div class="card-option" style="margin-top: 12px;" onclick="aplicarCapaRadar('vientos')">
-                <div style="font-weight: 600; color: #f59e0b;">💨 Vectores y Líneas de Viento</div>
-                <div class="sub-texto">Flujos atmosféricos ondulados y corrientes</div>
+                <div style="font-weight: 600; color: #f59e0b;">💨 Vectores e Intensidad de Viento (💨)</div>
+                <div class="sub-texto">Líneas de flujo y símbolos de viento</div>
             </div>
 
             <div class="card-option" style="margin-top: 12px;" onclick="aplicarCapaRadar('precipitacion')">
-                <div style="font-weight: 600; color: #f59e0b;">🌧️ Núcleos de Precipitación</div>
-                <div class="sub-texto">Celdas convectivas y bandas de lluvia</div>
+                <div style="font-weight: 600; color: #f59e0b;">🌧️ Zonas de Lluvia y Tormenta (🌧️)</div>
+                <div class="sub-texto">Indicadores gráficos de aguaceros</div>
             </div>
         </div>
     </div>
 
-    <!-- PANEL 3: ALERTAS Y AVISOS OFICIALES (CON ACCESO DIRECTO A BOLETINES) -->
+    <!-- PANEL 3: ALERTAS Y AVISOS OFICIALES (ENLACES REALES SMN/CONAGUA/SEMAR) -->
     <div id="panel-alertas" class="weather-panel">
         <div class="panel-content-inner">
             <h2 class="titulo-panel" style="font-size: 18px; margin-bottom: 6px;">🚨 Avisos Oficiales (CONAGUA / SMN)</h2>
-            <p class="sub-texto" style="margin-bottom: 14px;">Haz clic en cualquier alerta para abrir el boletín institucional completo.</p>
+            <p class="sub-texto" style="margin-bottom: 14px;">Haz clic en cualquier aviso para abrir directamente el boletín oficial institucional.</p>
 
             <div class="alert-card warning" onclick="abrirBoletinOficial('smn')" style="cursor: pointer;">
-                <div style="font-weight: bold; color: #ef4444;">🔴 Alerta Roja (Peligro Máximo) - Huracán Polo ↗</div>
-                <div class="sub-texto" style="margin-top: 4px;"><b>Estados afectados:</b> Guerrero, Michoacán y Colima. Toca para ver el aviso oficial de CONAGUA.</div>
+                <div style="font-weight: bold; color: #ef4444;">🔴 Alerta Ciclónica - Huracán Polo (Pacífico) ↗</div>
+                <div class="sub-texto" style="margin-top: 4px;"><b>Autoridad:</b> Servicio Meteorológico Nacional (SMN). Toca para abrir el aviso oficial de ciclones tropicales.</div>
             </div>
 
             <div class="alert-card info" onclick="abrirBoletinOficial('puertos')" style="cursor: pointer; margin-top: 12px;">
-                <div style="font-weight: bold; color: #f59e0b;">⚓ Cierres de Puertos y Navegación ↗</div>
-                <div class="sub-texto" style="margin-top: 4px;">Capitanía de Puerto reporta restricciones en Lázaro Cárdenas y Manzanillo. Toca para ver comunicado SEMAR.</div>
+                <div style="font-weight: bold; color: #f59e0b;">⚓ Avisos a la Navegación y Puertos ↗</div>
+                <div class="sub-texto" style="margin-top: 4px;"><b>Autoridad:</b> Secretaría de Marina (SEMAR). Toca para consultar comunicados de capitanía de puerto.</div>
             </div>
 
-            <div class="alert-card info" onclick="abrirBoletinOficial('atlantico')" style="cursor: pointer; margin-top: 12px; border-left: 4px solid #3b82f6;">
-                <div style="font-weight: bold; color: #3b82f6;">🔵 Cuenca del Caribe y Atlántico ↗</div>
-                <div class="sub-texto" style="margin-top: 4px;">Sin formaciones ciclónicas de riesgo para el territorio nacional. Toca para detalles generales.</div>
+            <div class="alert-card info" onclick="abrirBoletinOficial('aviso_general')" style="cursor: pointer; margin-top: 12px; border-left: 4px solid #3b82f6;">
+                <div style="font-weight: bold; color: #3b82f6;">🔵 Pronóstico General y Vigilancia ↗</div>
+                <div class="sub-texto" style="margin-top: 4px;"><b>Autoridad:</b> CONAGUA. Toca para ver el reporte general del clima en el territorio nacional.</div>
             </div>
         </div>
     </div>
 
     <!-- PANEL 4: PRONÓSTICO / CLIMA LOCAL -->
     <div id="panel-pronostico" class="weather-panel">
-        <!-- Contenido generado dinámicamente en app.js enfocándose en la localidad -->
+        <!-- Contenido generado dinámicamente en app.js -->
     </div>
 
     <!-- PANEL 5: SEGURIDAD Y REPORTE -->

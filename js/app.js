@@ -13,7 +13,7 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 function initMap() {
-    // Centrado estratégico en México (con enfoque local automático o predeterminado)
+    // Centrado estratégico en México
     appState.map = L.map('map', {
         zoomControl: false
     }).setView([20.0, -100.0], 5);
@@ -67,7 +67,7 @@ function renderActiveStorms() {
 
     const poloMarker = L.marker([poloLat, poloLon], { icon: poloIcon })
         .addTo(appState.map)
-        .bindPopup("<b>🌀 Huracán Polo (Cat. 4/5)</b><br>Vientos: ~260 km/h<br>SIAT-CT: Alerta Roja (Peligro Máximo)");
+        .bindPopup("<b>🌀 Huracán Polo (Cat. 4/5)</b><br>Vientos: ~260 km/h<br>SMN/CONAGUA: Alerta de impacto en litoral del Pacífico");
     appState.markers.push(poloMarker);
 
     const poloForecast = L.polyline([
@@ -112,7 +112,7 @@ function renderActiveStorms() {
 
     const odalysMarker = L.marker([odalysLat, odalysLon], { icon: odalysIcon })
         .addTo(appState.map)
-        .bindPopup("<b>🌀 Huracán Odalys (Cat. 1)</b><br>Vientos: ~120 km/h<br>Mar abierto - Sin amenaza directa");
+        .bindPopup("<b>🌀 Huracán Odalys (Cat. 1)</b><br>Vientos: ~120 km/h<br>Mar abierto - Sin amenaza directa a costas");
     appState.markers.push(odalysMarker);
 
     const odalysForecast = L.polyline([
@@ -131,7 +131,7 @@ function renderActiveStorms() {
 }
 
 // =====================================================
-//  CAPAS CON TEXTURAS ORGÁNICAS REALISTAS (NUBES, VIENTO, LLUVIA)
+//  CAPAS VISUALES CON ICONOS ILUSTRATIVOS CLAROS
 // =====================================================
 function aplicarCapaRadar(tipo) {
     if (appState.activeRadarLayer) {
@@ -147,61 +147,67 @@ function aplicarCapaRadar(tipo) {
     let htmlLeyenda = "";
     const groupLayers = [];
 
+    // Coordenadas estratégicas para colocar los iconos ilustrativos en el mapa
+    const puntosInteres = [
+        { lat: 17.5, lon: -103.5 },
+        { lat: 18.5, lon: -105.5 },
+        { lat: 15.5, lon: -102.0 },
+        { lat: 19.2, lon: -107.0 }
+    ];
+
     if (tipo === 'infrarrojo') {
-        tituloLeyenda = "🛰️ Bandas Nubosas e Infrarrojo";
-        htmlLeyenda = '<div style="font-size:11px; line-height:1.4;"><b>Patrón Orgánico:</b> Humedad convectiva y cimas nubosas altas<br><b>Tonos Morados:</b> Tormenta central densa</div>';
+        tituloLeyenda = "🛰️ Nubes y Masas Nubosas";
+        htmlLeyenda = '<div style="font-size:11px; line-height:1.4;"><b>☁️ Iconos de Nube:</b> Indican concentración densa de humedad y tormentas activas en la región.</div>';
         
-        // Simulación de nubes orgánicas mediante múltiples círculos traslapados en espiral
-        const centroLat = 16.8;
-        const centroLon = -104.2;
-        for (let i = 0; i < 20; i++) {
-            let offsetLat = (Math.random() - 0.5) * 2.5;
-            let offsetLon = (Math.random() - 0.5) * 3.0;
-            groupLayers.push(L.circle([centroLat + offsetLat, centroLon + offsetLon], {
-                color: 'transparent',
-                fillColor: i % 2 === 0 ? '#c084fc' : '#9333ea',
-                fillOpacity: 0.25,
-                radius: 40000 + Math.random() * 30000
-            }));
-        }
+        puntosInteres.forEach(pt => {
+            const nubeIcon = L.divIcon({
+                className: 'weather-emoji-icon',
+                html: '<div style="font-size: 26px; text-shadow: 0 0 8px rgba(0,0,0,0.8);">☁️⛈️</div>',
+                iconSize: [30, 30],
+                iconAnchor: [15, 15]
+            });
+            groupLayers.push(L.marker([pt.lat, pt.lon], { icon: nubeIcon }));
+        });
     } else if (tipo === 'vientos') {
-        tituloLeyenda = "💨 Líneas de Viento y Corrientes";
-        htmlLeyenda = '<div style="font-size:11px; line-height:1.4;"><b>Líneas Onduladas:</b> Vectores de flujo ciclónico<br><b>Celeste/Azul:</b> Intensidad de ráfagas</div>';
+        tituloLeyenda = "💨 Vectores e Intensidad de Viento";
+        htmlLeyenda = '<div style="font-size:11px; line-height:1.4;"><b>💨 / 🌀 Símbolos:</b> Muestran la dirección del flujo de aire y rachas fuertes en el litoral.</div>';
         
+        // Mantenemos los vectores limpios que ya funcionaban bien y agregamos iconos de viento
         const centroLat = 16.8;
         const centroLon = -104.2;
-        for (let i = 0; i < 12; i++) {
-            let anguloOffset = (i * Math.PI) / 6;
+        for (let i = 0; i < 10; i++) {
+            let anguloOffset = (i * Math.PI) / 5;
             let ondaCoords = [];
-            for (let d = 0.5; d <= 4.0; d += 0.4) {
+            for (let d = 0.5; d <= 3.5; d += 0.5) {
                 let lat = centroLat + (d * 0.8) * Math.sin(anguloOffset + d);
                 let lon = centroLon + (d * 1.2) * Math.cos(anguloOffset + d);
                 ondaCoords.push([lat, lon]);
             }
-            groupLayers.push(L.polyline(ondaCoords, {
-                color: i % 2 === 0 ? '#38bdf8' : '#0284c7',
-                weight: 2.5,
-                smoothFactor: 1.5,
-                opacity: 0.75
-            }));
+            groupLayers.push(L.polyline(ondaCoords, { color: '#38bdf8', weight: 3, opacity: 0.8 }));
         }
+
+        puntosInteres.forEach(pt => {
+            const vientoIcon = L.divIcon({
+                className: 'weather-emoji-icon',
+                html: '<div style="font-size: 24px; text-shadow: 0 0 8px rgba(0,0,0,0.8);">💨</div>',
+                iconSize: [30, 30],
+                iconAnchor: [15, 15]
+            });
+            groupLayers.push(L.marker([pt.lat, pt.lon], { icon: vientoIcon }));
+        });
     } else if (tipo === 'precipitacion') {
-        tituloLeyenda = "🌧️ Núcleos de Precipitación";
-        htmlLeyenda = '<div style="font-size:11px; line-height:1.4;"><b>Verde:</b> Lluvia moderada<br><b>Rojo/Naranja:</b> Celdas de tormenta severa con aguaceros</div>';
+        tituloLeyenda = "🌧️ Zonas de Lluvia y Tormenta";
+        htmlLeyenda = '<div style="font-size:11px; line-height:1.4;"><b>🌧️ / ⛈️ Iconos de Lluvia:</b> Ubican las zonas con aguaceros fuertes y riesgo de encharcamientos.</div>';
         
-        // Celdas orgánicas de lluvia en bandas espirales
-        const centroLat = 16.8;
-        const centroLon = -104.2;
-        for (let j = 0; j < 8; j++) {
-            let angle = j * (Math.PI / 4);
-            let dist = 1.0 + Math.random() * 1.5;
-            groupLayers.push(L.circle([centroLat + dist * Math.sin(angle), centroLon + dist * Math.cos(angle)], {
-                color: 'transparent',
-                fillColor: j % 3 === 0 ? '#ef4444' : (j % 2 === 0 ? '#f59e0b' : '#22c55e'),
-                fillOpacity: 0.4,
-                radius: 35000 + Math.random() * 25000
-            }));
-        }
+        puntosInteres.forEach(pt => {
+            const lluviaIcon = L.divIcon({
+                className: 'weather-emoji-icon',
+                html: '<div style="font-size: 26px; text-shadow: 0 0 8px rgba(0,0,0,0.8);">🌧️⚡</div>',
+                iconSize: [30, 30],
+                iconAnchor: [15, 15]
+            });
+            groupLayers.push(L.marker([pt.lat, pt.lon], { icon: lluviaIcon }));
+        });
     }
 
     appState.activeRadarLayer = L.layerGroup(groupLayers).addTo(appState.map);
@@ -235,35 +241,30 @@ function aplicarCapaRadar(tipo) {
 }
 
 // =====================================================
-//  CLIMA LOCAL Y ENLACE A BOLETINES OFICIALES
+//  CLIMA LOCAL Y ENLACES DIRECTOS A BOLETINES OFICIALES REALES
 // =====================================================
 function initLocalWeather() {
-    // Detectar ubicación local simulada para usuario en zona costera de afectación (o puerto principal)
-    // Actualiza dinámicamente los datos del panel de Pronóstico y Clima Local
     const localContainer = document.getElementById('panel-pronostico');
     if (localContainer) {
-        // Enfoque local prioritario
         localContainer.innerHTML = `
             <div class="panel-content-inner">
                 <h2 class="titulo-panel" style="font-size: 18px; margin-bottom: 6px;">📍 Clima en tu Ubicación Local</h2>
-                <p class="sub-texto" style="margin-bottom: 16px;">Monitoreo en tiempo real para tu zona exacta.</p>
+                <p class="sub-texto" style="margin-bottom: 16px;">Monitoreo oficial directo para zonas costeras y peninsulares.</p>
 
                 <div class="card-option" style="background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.4); margin-bottom: 12px;">
                     <div style="display: flex; justify-content: space-between; font-weight: bold; color: #ef4444;">
-                        <span>⚠️ Alerta Vigente en tu Localidad</span>
-                        <span>Categoría 4/5</span>
+                        <span>⚠️ Huracán Polo (Pacífico)</span>
+                        <span>Efecto Indirecto / Vigente</span>
                     </div>
-                    <div class="sub-texto" style="margin-top: 6px;">Vientos sostenidos actuales: <b>95 km/h (Rachas de 120 km/h)</b></div>
-                    <div class="sub-texto" style="margin-top: 2px;">Precipitación estimada: <b>Torrencial (150 mm)</b></div>
+                    <div class="sub-texto" style="margin-top: 6px;">Vaguadas y bandas nubosas reforzando lluvias en el sur y occidente del país.</div>
                 </div>
 
-                <div class="card-option">
+                <div class="card-option" style="margin-bottom: 12px;">
                     <div style="display: flex; justify-content: space-between; font-weight: bold; color: #f59e0b;">
-                        <span>🌡️ Condiciones Locales Actuales</span>
-                        <span>🌧️ 26°C / 92% Humedad</span>
+                        <span>🌴 Península de Yucatán y Caribe</span>
+                        <span>🌤️ 32°C / Tormentas Vespertinas</span>
                     </div>
-                    <div class="sub-texto" style="margin-top: 6px;">Presión atmosférica: <b>982 hPa (En descenso rápido)</b></div>
-                    <div class="sub-texto" style="margin-top: 2px;">Estado del mar: <b>Oleaje elevado de 4 a 6 metros</b></div>
+                    <div class="sub-texto" style="margin-top: 6px;">Ambiente caluroso con presencia de chubascos dispersos por ondas tropicales. Sin ciclón directo amenazando la zona.</div>
                 </div>
             </div>
         `;
@@ -274,11 +275,10 @@ function abrirBoletinOficial(tipo) {
     let urlOficial = "https://smn.conagua.gob.mx/es/ciclones-tropicales/cuenca-del-pacifico";
     if (tipo === 'puertos') {
         urlOficial = "https://www.gob.mx/semar";
-    } else if (tipo === 'atlantico') {
-        urlOficial = "https://smn.conagua.gob.mx/";
+    } else if (tipo === 'aviso_general') {
+        urlOficial = "https://smn.conagua.gob.mx/es/";
     }
     
-    // Abre el enlace oficial del boletín institucional
     window.open(urlOficial, '_blank');
 }
 
