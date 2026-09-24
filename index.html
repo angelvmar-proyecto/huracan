@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+    <title>🌊 Huracanes MX Pro</title>
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <!-- Estilos Pro Custom -->
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+    <!-- BARRA DE PESTAÑAS SUPERIOR -->
+    <nav class="weather-tabs">
+        <button class="tab-btn active" onclick="switchTab('trayectoria', event)">🌀 Trayectoria</button>
+        <button class="tab-btn" onclick="switchTab('radar', event)">📡 Radar</button>
+        <button class="tab-btn" onclick="switchTab('alertas', event)">🚨 Alertas</button>
+        <button class="tab-btn" onclick="switchTab('seguridad', event)">🛡️ Seguridad</button>
+    </nav>
+
+    <!-- PANEL 1: TRAYECTORIA Y MAPA -->
+    <div id="panel-trayectoria" class="weather-panel active">
+        <div id="map"></div>
+        <div class="info-card-floating">
+            <div class="titulo-panel">🌊 Monitoreo en Tiempo Real</div>
+            <div class="sub-texto">Sincronización NOAA activa · Sin interrupciones</div>
+        </div>
+    </div>
+
+    <!-- PANEL 2: RADAR -->
+    <div id="panel-radar" class="weather-panel" style="padding: 60px 16px;">
+        <h2 style="color: #d4a843; font-size: 18px;">📡 Capas de Radar Meteorológico</h2>
+        <p class="sub-texto" style="margin-top: 8px;">Visualización de precipitaciones en alta resolución.</p>
+    </div>
+
+    <!-- PANEL 3: ALERTAS -->
+    <div id="panel-alertas" class="weather-panel" style="padding: 60px 16px;">
+        <h2 style="color: #d4a843; font-size: 18px;">🚨 Avisos y Protección Civil</h2>
+        <p class="sub-texto" style="margin-top: 8px;">Boletines oficiales actualizados al momento.</p>
+    </div>
+
+    <!-- PANEL 4: SEGURIDAD -->
+    <div id="panel-seguridad" class="weather-panel" style="padding: 60px 16px;">
+        <h2 style="color: #d4a843; font-size: 18px;">🛡️ Protocolos de Emergencia</h2>
+        <p class="sub-texto" style="margin-top: 8px;">Botones de acceso rápido y refugios cercanos.</p>
+    </div>
+
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <!-- Lógica Pro Custom -->
+    <script src="js/app.js"></script>
+</body>
+</html>

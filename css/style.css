@@ -1,0 +1,94 @@
+/* ===== ESTILOS GLOBALES PROFESIONALES ===== */
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html, body { 
+    width: 100%; height: 100%; overflow: hidden;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; 
+    background: #0a0804; color: #f5e6c8; 
+    position: fixed; top: 0; left: 0;
+}
+
+/* ---- BARRA DE PESTAÑAS SUPERIOR ---- */
+.weather-tabs {
+    display: flex;
+    background: linear-gradient(135deg, #141006, #1c160a);
+    padding: 8px 10px;
+    gap: 6px;
+    overflow-x: auto;
+    position: fixed; top: 0; left: 0; right: 0;
+    z-index: 1000; height: 48px;
+    border-bottom: 1px solid rgba(212, 168, 67, 0.2);
+    box-shadow: 0 2px 10px rgba(0,0,0,0.8);
+    scrollbar-width: none; /* Ocultar scroll en móviles */
+}
+.weather-tabs::-webkit-scrollbar { display: none; }
+
+.tab-btn {
+    background: rgba(255, 255, 255, 0.05);
+    color: #a89070;
+    border: 1px solid rgba(212, 168, 67, 0.15);
+    padding: 6px 14px;
+    border-radius: 16px;
+    font-weight: 700;
+    font-size: 12px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+}
+
+.tab-btn.active {
+    background: linear-gradient(135deg, #d4a843, #b8860b);
+    color: #fff8e7;
+    border-color: #d4a843;
+    box-shadow: 0 2px 12px rgba(184, 134, 11, 0.4);
+}
+
+/* ---- PANELES CON ACELERACIÓN POR GPU (CERO PARPADEO) ---- */
+.weather-panel {
+    display: none;
+    position: fixed;
+    top: 48px; left: 0; right: 0; bottom: 0;
+    transform: translateZ(0);
+    z-index: 1;
+}
+.weather-panel.active {
+    display: block;
+}
+
+/* ---- MAPA ---- */
+#map {
+    width: 100%;
+    height: 100%;
+    background: #111;
+}
+
+/* ---- PANEL INFERIOR FLOTANTE DE DATOS ---- */
+.info-card-floating {
+    position: fixed;
+    bottom: 12px; left: 12px; right: 12px;
+    background: rgba(10, 8, 4, 0.92);
+    backdrop-filter: blur(15px);
+    padding: 12px;
+    border-top: 3px solid #d4a843;
+    border-radius: 14px;
+    z-index: 999;
+    box-shadow: 0 4px 30px rgba(0,0,0,0.9);
+}
+.titulo-panel { font-size: 15px; font-weight: 800; color: #d4a843; margin-bottom: 4px; }
+.sub-texto { font-size: 12px; color: #8a7a5a; }
+
+/* ---- CONTROLES FLOTANTES ---- */
+.floating-btn {
+    position: fixed;
+    right: 16px;
+    bottom: 180px;
+    background: rgba(15, 12, 6, 0.9);
+    border: 2px solid #d4a843;
+    color: #d4a843;
+    width: 44px; height: 44px;
+    border-radius: 50%;
+    font-size: 18px;
+    z-index: 2000;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.6);
+}

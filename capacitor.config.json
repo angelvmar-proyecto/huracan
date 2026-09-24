@@ -1,0 +1,6 @@
+{
+  "appId": "com.angelvmar.huracan",
+  "appName": "Huracan Pro",
+  "webDir": ".",
+  "bundledWebRuntime": false
+}
