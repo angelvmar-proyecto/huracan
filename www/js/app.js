@@ -13,7 +13,6 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 function initMap() {
-    // Centrado estratégico para abarcar tanto el Pacífico como el Caribe y México
     appState.map = L.map('map', {
         zoomControl: false
     }).setView([18.5, -92.0], 5);
@@ -29,17 +28,14 @@ function initMap() {
 }
 
 function renderActiveStorms() {
-    // Limpiar capas anteriores si existieran
     appState.markers.forEach(m => appState.map.removeLayer(m));
     appState.lines.forEach(l => appState.map.removeLayer(l));
     appState.markers = [];
     appState.lines = [];
 
     // =========================================================
-    // 1. SISTEMAS ACTIVOS EN EL OCÉANO PACÍFICO
+    // 1. HURACÁN POLO (Pacífico - Cat 4/5)
     // =========================================================
-    
-    // Huracán Polo (Pacífico - Cat 4/5)
     const poloLat = 16.8;
     const poloLon = -104.2;
     const poloTrajectory = [
@@ -56,13 +52,22 @@ function renderActiveStorms() {
         [15.8, -105.0]
     ];
 
-    dibujarSistemaCiclones("Huracán Polo (Cat. 4/5)", poloLat, poloLon, '#dc2626', '4', poloTrajectory, poloConeCoords, [
-        { lat: 17.8, lon: -107.0, label: 'M' },
-        { lat: 19.5, lon: -110.5, label: 'H' },
-        { lat: 21.8, lon: -114.5, label: 'T' }
-    ]);
+    dibujarSistemaCiclones(
+        "Huracán Polo (Cat. 4/5)", 
+        poloLat, poloLon, 
+        '#dc2626', '4', 
+        poloTrajectory, poloConeCoords, 
+        [
+            { lat: 17.8, lon: -107.0, label: 'M', time: '+12h' },
+            { lat: 19.5, lon: -110.5, label: 'H', time: '+24h' },
+            { lat: 21.8, lon: -114.5, label: 'T', time: '+48h' }
+        ],
+        "Desplazamiento al NO a 14 km/h"
+    );
 
-    // Huracán Odalys (Pacífico Abierto - Cat 1)
+    // =========================================================
+    // 2. HURACÁN ODALYS (Pacífico Abierto - Cat 1)
+    // =========================================================
     const odalysLat = 22.5;
     const odalysLon = -122.0;
     const odalysTrajectory = [
@@ -77,17 +82,21 @@ function renderActiveStorms() {
         [25.0, -131.0]
     ];
 
-    dibujarSistemaCiclones("Huracán Odalys (Cat. 1)", odalysLat, odalysLon, '#3b82f6', '1', odalysTrajectory, odalysConeCoords, [
-        { lat: 24.0, lon: -125.0, label: 'H' },
-        { lat: 26.2, lon: -129.5, label: 'T' }
-    ]);
-
+    dibujarSistemaCiclones(
+        "Huracán Odalys (Cat. 1)", 
+        odalysLat, odalysLon, 
+        '#3b82f6', '1', 
+        odalysTrajectory, odalysConeCoords, 
+        [
+            { lat: 24.0, lon: -125.0, label: 'H', time: '+12h' },
+            { lat: 26.2, lon: -129.5, label: 'T', time: '+24h' }
+        ],
+        "Desplazamiento al ONO a 18 km/h"
+    );
 
     // =========================================================
-    // 2. SISTEMAS ACTIVOS EN EL CARIBE Y ATLÁNTICO
+    // 3. TORMENTA TROPICAL / CARIBE
     // =========================================================
-
-    // Tormenta Tropical / Onda en el Caribe
     const caribeLat = 15.5;
     const caribeLon = -78.0;
     const caribeTrajectory = [
@@ -102,12 +111,19 @@ function renderActiveStorms() {
         [18.5, -88.2]
     ];
 
-    dibujarSistemaCiclones("Tormenta Tropical en el Caribe", caribeLat, caribeLon, '#10b981', 'TT', caribeTrajectory, caribeConeCoords, [
-        { lat: 17.2, lon: -82.5, label: 'T' },
-        { lat: 19.5, lon: -86.8, label: 'H' }
-    ]);
+    dibujarSistemaCiclones(
+        "Perturbación / Caribe", 
+        caribeLat, caribeLon, 
+        '#10b981', 'TT', 
+        caribeTrajectory, caribeConeCoords, 
+        [
+            { lat: 17.2, lon: -82.5, label: 'T', time: '+18h' },
+            { lat: 19.5, lon: -86.8, label: 'H', time: '+36h' }
+        ],
+        "Desplazamiento al ONW a 20 km/h"
+    );
 
-    // Polígono de probabilidad institucional en el Caribe (similar a las zonas verdes del SMN)
+    // Polígono de probabilidad institucional en el Caribe
     const zonaCaribeCoords = [
         [12.0, -80.0],
         [16.0, -70.0],
@@ -124,8 +140,8 @@ function renderActiveStorms() {
     appState.lines.push(zonaCaribePoly);
 }
 
-function dibujarSistemaCiclones(nombre, lat, lon, colorHex, badgeTexto, trayectoriaCoords, conoCoords, secuenciales) {
-    // 1. Cono de incertidumbre simétrico
+function dibujarSistemaCiclones(nombre, lat, lon, colorHex, badgeTexto, trayectoriaCoords, conoCoords, secuenciales, velocidadTraslacion) {
+    // Cono de incertidumbre
     const cono = L.polygon(conoCoords, {
         color: colorHex,
         weight: 1.5,
@@ -135,7 +151,7 @@ function dibujarSistemaCiclones(nombre, lat, lon, colorHex, badgeTexto, trayecto
     }).addTo(appState.map);
     appState.lines.push(cono);
 
-    // 2. Línea central de trayectoria
+    // Línea de trayectoria
     const lineaTrayectoria = L.polyline(trayectoriaCoords, {
         color: colorHex,
         weight: 3.5,
@@ -143,29 +159,31 @@ function dibujarSistemaCiclones(nombre, lat, lon, colorHex, badgeTexto, trayecto
     }).addTo(appState.map);
     appState.lines.push(lineaTrayectoria);
 
-    // 3. Puntos secuenciales (T, H, M)
+    // Puntos secuenciales con etiqueta de tiempo proyectado (+12h, +24h, etc.)
     secuenciales.forEach(pt => {
         const seqIcon = L.divIcon({
             className: 'sequential-marker',
-            html: `<div style="background: white; color: ${colorHex}; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: bold; border: 2px solid ${colorHex}; box-shadow: 0 2px 4px rgba(0,0,0,0.3);">${pt.label}</div>`,
-            iconSize: [24, 24],
-            iconAnchor: [12, 12]
+            html: `<div style="background: white; color: ${colorHex}; width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: bold; border: 2px solid ${colorHex}; box-shadow: 0 2px 4px rgba(0,0,0,0.3);">${pt.label}</div>`,
+            iconSize: [26, 26],
+            iconAnchor: [13, 13]
         });
-        const markerSeq = L.marker([pt.lat, pt.lon], { icon: seqIcon }).addTo(appState.map);
+        const markerSeq = L.marker([pt.lat, pt.lon], { icon: seqIcon })
+            .addTo(appState.map)
+            .bindPopup(`<b>Pronóstico (${pt.time})</b><br>${nombre}`);
         appState.markers.push(markerSeq);
     });
 
-    // 4. Marcador principal del ciclón en el ojo actual
+    // Marcador principal (Posición actual estimada)
     const iconoPrincipal = L.divIcon({
         className: 'custom-storm-marker',
-        html: `<div style="background: ${colorHex}; color: white; width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 15px; font-weight: bold; box-shadow: 0 0 12px ${colorHex}; border: 2px solid #fff;">${badgeTexto}</div>`,
-        iconSize: [36, 36],
-        iconAnchor: [18, 18]
+        html: `<div style="background: ${colorHex}; color: white; width: 38px; height: 38px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 15px; font-weight: bold; box-shadow: 0 0 12px ${colorHex}; border: 2px solid #fff;">${badgeTexto}</div>`,
+        iconSize: [38, 38],
+        iconAnchor: [19, 19]
     });
 
     const marker = L.marker([lat, lon], { icon: iconoPrincipal })
         .addTo(appState.map)
-        .bindPopup(`<b>🌀 ${nombre}</b><br>Monitoreo oficial SMN / CONAGUA`);
+        .bindPopup(`<b>🌀 ${nombre}</b><br><b>Posición Actual (Emisión Oficial)</b><br>🏃‍♂️ ${velocidadTraslacion}<br>🕒 Actualizado: 26 SEP 2026 - 15:00 UTC`);
     
     appState.markers.push(marker);
 }
@@ -194,7 +212,7 @@ function aplicarCapaRadar(tipo) {
 
     if (tipo === 'infrarrojo') {
         tituloLeyenda = "🛰️ Nubes y Masas Nubosas";
-        htmlLeyenda = '<div style="font-size:11px; line-height:1.4;"><b>☁️ Iconos:</b> Convección y nubosidad en Pacífico y Caribe.</div>';
+        htmlLeyenda = '<div style="font-size:11px; line-height:1.4;"><b>☁️ Iconos:</b> Convección y nubosidad activa en Pacífico y Caribe.</div>';
         puntosInteres.forEach(pt => {
             const icono = L.divIcon({
                 className: 'weather-emoji',
@@ -205,7 +223,7 @@ function aplicarCapaRadar(tipo) {
         });
     } else if (tipo === 'vientos') {
         tituloLeyenda = "💨 Vectores de Viento";
-        htmlLeyenda = '<div style="font-size:11px; line-height:1.4;"><b>💨 Símbolos:</b> Dirección de flujos en ambas cuencas.</div>';
+        htmlLeyenda = '<div style="font-size:11px; line-height:1.4;"><b>💨 Símbolos:</b> Dirección de flujos y rachas ciclónicas.</div>';
         puntosInteres.forEach(pt => {
             const icono = L.divIcon({
                 className: 'weather-emoji',
@@ -216,7 +234,7 @@ function aplicarCapaRadar(tipo) {
         });
     } else if (tipo === 'precipitacion') {
         tituloLeyenda = "🌧️ Zonas de Precipitación";
-        htmlLeyenda = '<div style="font-size:11px; line-height:1.4;"><b>🌧️ Símbolos:</b> Lluvias intensas asociadas a sistemas.</div>';
+        htmlLeyenda = '<div style="font-size:11px; line-height:1.4;"><b>🌧️ Símbolos:</b> Lluvias torrenciales y tormentas asociadas.</div>';
         puntosInteres.forEach(pt => {
             const icono = L.divIcon({
                 className: 'weather-emoji',
@@ -262,23 +280,25 @@ function initLocalWeather() {
     if (localContainer) {
         localContainer.innerHTML = `
             <div class="panel-content-inner">
-                <h2 class="titulo-panel" style="font-size: 18px; margin-bottom: 6px;">📍 Clima en tu Ubicación Local</h2>
-                <p class="sub-texto" style="margin-bottom: 16px;">Monitoreo oficial simultáneo para Pacífico y Caribe.</p>
+                <h2 class="titulo-panel" style="font-size: 18px; margin-bottom: 4px;">📍 Clima Local y Emisión Oficial</h2>
+                <p class="sub-texto" style="margin-bottom: 12px; color: #f59e0b; font-weight: 500;">🕒 Último Boletín SMN/CONAGUA: 26 SEP 2026 - 15:00 UTC</p>
 
-                <div class="card-option" style="background: rgba(220, 38, 38, 0.15); border: 1px solid rgba(220, 38, 38, 0.4); margin-bottom: 12px;">
+                <div class="card-option" style="background: rgba(220, 38, 38, 0.15); border: 1px solid rgba(220, 38, 38, 0.4); margin-bottom: 10px;">
                     <div style="display: flex; justify-content: space-between; font-weight: bold; color: #ef4444;">
-                        <span>🌊 Cuenca del Pacífico (Polo / Odalys)</span>
-                        <span>Alerta Activa</span>
+                        <span>🌊 Huracán Polo (Pacífico)</span>
+                        <span>Cat. 4/5</span>
                     </div>
-                    <div class="sub-texto" style="margin-top: 6px;">Vigilancia en litoral del Pacífico por bandas nubosas y oleaje elevado.</div>
+                    <div class="sub-texto" style="margin-top: 4px;">🏃‍♂️ <b>Traslación:</b> Nor-Oeste a 14 km/h</div>
+                    <div class="sub-texto" style="margin-top: 2px;">Vientos sostenidos de 260 km/h. Alerta máxima en litoral.</div>
                 </div>
 
-                <div class="card-option" style="background: rgba(16, 185, 129, 0.15); border: 1px solid rgba(16, 185, 129, 0.4); margin-bottom: 12px;">
+                <div class="card-option" style="background: rgba(16, 185, 129, 0.15); border: 1px solid rgba(16, 185, 129, 0.4); margin-bottom: 10px;">
                     <div style="display: flex; justify-content: space-between; font-weight: bold; color: #10b981;">
-                        <span>🌴 Cuenca del Caribe y Península</span>
+                        <span>🌴 Caribe / Península</span>
                         <span>Vigilancia Tropical</span>
                     </div>
-                    <div class="sub-texto" style="margin-top: 6px;">Seguimiento a perturbación en el Caribe central con potencial ciclónico gradual.</div>
+                    <div class="sub-texto" style="margin-top: 4px;">🏃‍♂️ <b>Traslación:</b> ONO a 20 km/h</div>
+                    <div class="sub-texto" style="margin-top: 2px;">Chubascos locales y monitoreo de baja presión.</div>
                 </div>
             </div>
         `;
