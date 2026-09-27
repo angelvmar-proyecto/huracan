@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-09-27T10:40:49Z",
+  "actualizado": "2026-09-27T15:33:13Z",
   "fuente": "NHC/NOAA CurrentStorms.json",
   "hayCiclones": true,
   "tormentas": [
@@ -9,59 +9,59 @@
       "classification": "TD",
       "intensity": "30",
       "pressure": "1010",
-      "movementDir": 175,
+      "movementDir": 160,
       "movementSpeed": 3,
-      "lat": 29.2,
-      "lon": -43.9,
-      "lastUpdate": "2026-09-27T09:00:00.000Z"
+      "lat": 29.3,
+      "lon": -43.8,
+      "lastUpdate": "2026-09-27T15:00:00.000Z"
     },
     {
       "id": "ep162026",
       "name": "Odalys",
-      "classification": "HU",
-      "intensity": "65",
-      "pressure": "985",
+      "classification": "TS",
+      "intensity": "50",
+      "pressure": "992",
       "movementDir": 5,
-      "movementSpeed": 8,
-      "lat": 21.9,
+      "movementSpeed": 6,
+      "lat": 22.6,
       "lon": -123.4,
-      "lastUpdate": "2026-09-27T09:00:00.000Z"
+      "lastUpdate": "2026-09-27T15:00:00.000Z"
     },
     {
       "id": "ep172026",
       "name": "Polo",
       "classification": "HU",
-      "intensity": "105",
-      "pressure": "952",
-      "movementDir": 330,
-      "movementSpeed": 10,
-      "lat": 20.3,
-      "lon": -113.6,
-      "lastUpdate": "2026-09-27T09:00:00.000Z"
+      "intensity": "110",
+      "pressure": "949",
+      "movementDir": 345,
+      "movementSpeed": 12,
+      "lat": 21.3,
+      "lon": -113.9,
+      "lastUpdate": "2026-09-27T15:00:00.000Z"
     },
     {
       "id": "ep182026",
       "name": "Eighteen-E",
       "classification": "TD",
       "intensity": "30",
-      "pressure": "1008",
-      "movementDir": 285,
-      "movementSpeed": 10,
-      "lat": 12.2,
-      "lon": -99.1,
-      "lastUpdate": "2026-09-27T09:00:00.000Z"
+      "pressure": "1006",
+      "movementDir": 295,
+      "movementSpeed": 5,
+      "lat": 12.7,
+      "lon": -98.6,
+      "lastUpdate": "2026-09-27T15:00:00.000Z"
     },
     {
       "id": "ep152026",
       "name": "Nolo",
       "classification": "HU",
-      "intensity": "85",
+      "intensity": "90",
       "pressure": "967",
-      "movementDir": 260,
-      "movementSpeed": 9,
-      "lat": 16.5,
-      "lon": -157.3,
-      "lastUpdate": "2026-09-27T09:00:00.000Z"
+      "movementDir": 270,
+      "movementSpeed": 12,
+      "lat": 16.2,
+      "lon": -158.3,
+      "lastUpdate": "2026-09-27T15:00:00.000Z"
     }
   ]
 }
