@@ -491,7 +491,7 @@ async function cargarClimaLocal(lat, lon, nombreFallback) {
 }
 
 function abrirBoletinOficial(tipo) {
-    let url = "https://smn.conagua.gob.mx/es/ciclones-tropicales/cuenca-del-pacifico";
+    let url = "https://smn.conagua.gob.mx/es/";
     if (tipo === 'puertos')       url = "https://www.gob.mx/semar";
     else if (tipo === 'aviso_general') url = "https://smn.conagua.gob.mx/es/";
     window.open(url, '_blank');
