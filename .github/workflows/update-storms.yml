@@ -1,0 +1,57 @@
+name: Actualizar ciclones NOAA
+
+on:
+  schedule:
+    - cron: '*/30 * * * *'
+  workflow_dispatch:
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Descargar y transformar feed NOAA
+        run: |
+          curl -sS -f https://www.nhc.noaa.gov/CurrentStorms.json -o raw.json
+          python3 << 'PY'
+          import json, datetime
+          raw = json.load(open('raw.json'))
+          out = {
+              "actualizado": datetime.datetime.now(datetime.timezone.utc)
+                              .replace(microsecond=0).isoformat().replace("+00:00","Z"),
+              "fuente": "NHC/NOAA CurrentStorms.json",
+              "hayCiclones": False,
+              "tormentas": []
+          }
+          for s in raw.get("activeStorms", []):
+              lat = s.get("latitudeNumeric")
+              lon = s.get("longitudeNumeric")
+              if lat is None or lon is None:
+                  continue
+              out["hayCiclones"] = True
+              out["tormentas"].append({
+                  "id": s.get("id"),
+                  "name": s.get("name"),
+                  "classification": s.get("classification"),
+                  "intensity": s.get("intensity"),
+                  "pressure": s.get("pressure"),
+                  "movementDir": s.get("movementDir"),
+                  "movementSpeed": s.get("movementSpeed"),
+                  "lat": lat,
+                  "lon": lon,
+                  "lastUpdate": s.get("lastUpdate")
+              })
+          json.dump(out, open('www/clima_activo.json','w'), indent=2, ensure_ascii=False)
+          print(f"Ciclones activos: {len(out['tormentas'])}")
+          PY
+
+      - name: Commit si hubo cambios
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add www/clima_activo.json
+          git diff --staged --quiet || git commit -m "Auto: ciclones NOAA $(date -u +%FT%TZ)"
+          git push
