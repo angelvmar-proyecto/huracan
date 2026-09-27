@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-09-27T19:37:58Z",
+  "actualizado": "2026-09-27T22:52:32Z",
   "fuente": "NHC/NOAA CurrentStorms.json",
   "hayCiclones": true,
   "tormentas": [
@@ -8,60 +8,60 @@
       "name": "Fay",
       "classification": "TD",
       "intensity": "30",
-      "pressure": "1010",
-      "movementDir": 160,
-      "movementSpeed": 3,
-      "lat": 29.3,
-      "lon": -43.8,
-      "lastUpdate": "2026-09-27T15:00:00.000Z"
+      "pressure": "1011",
+      "movementDir": 180,
+      "movementSpeed": 5,
+      "lat": 28.9,
+      "lon": -44,
+      "lastUpdate": "2026-09-27T21:00:00.000Z"
     },
     {
       "id": "ep162026",
       "name": "Odalys",
-      "classification": "TS",
-      "intensity": "50",
-      "pressure": "992",
-      "movementDir": 5,
+      "classification": "PTC",
+      "intensity": "40",
+      "pressure": "1000",
+      "movementDir": 20,
       "movementSpeed": 6,
-      "lat": 22.6,
-      "lon": -123.4,
-      "lastUpdate": "2026-09-27T15:00:00.000Z"
+      "lat": 22.8,
+      "lon": -123.1,
+      "lastUpdate": "2026-09-27T21:00:00.000Z"
     },
     {
       "id": "ep172026",
       "name": "Polo",
       "classification": "HU",
       "intensity": "110",
-      "pressure": "950",
-      "movementDir": 345,
+      "pressure": "951",
+      "movementDir": 355,
       "movementSpeed": 12,
-      "lat": 21.3,
-      "lon": -114,
-      "lastUpdate": "2026-09-27T18:00:00.000Z"
+      "lat": 21.9,
+      "lon": -114.1,
+      "lastUpdate": "2026-09-27T21:00:00.000Z"
     },
     {
       "id": "ep182026",
-      "name": "Eighteen-E",
-      "classification": "TD",
-      "intensity": "30",
-      "pressure": "1006",
-      "movementDir": 295,
+      "name": "Rachel",
+      "classification": "TS",
+      "intensity": "35",
+      "pressure": "1005",
+      "movementDir": 290,
       "movementSpeed": 5,
-      "lat": 12.7,
-      "lon": -98.6,
-      "lastUpdate": "2026-09-27T15:00:00.000Z"
+      "lat": 12.6,
+      "lon": -99.1,
+      "lastUpdate": "2026-09-27T21:00:00.000Z"
     },
     {
       "id": "ep152026",
       "name": "Nolo",
       "classification": "HU",
-      "intensity": "90",
-      "pressure": "967",
-      "movementDir": 270,
+      "intensity": "100",
+      "pressure": "966",
+      "movementDir": 280,
       "movementSpeed": 12,
       "lat": 16.2,
-      "lon": -158.3,
-      "lastUpdate": "2026-09-27T15:00:00.000Z"
+      "lon": -159.3,
+      "lastUpdate": "2026-09-27T21:00:00.000Z"
     }
   ]
 }
