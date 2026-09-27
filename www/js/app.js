@@ -44,9 +44,8 @@ function initMap() {
     L.control.zoom({ position: 'topright' }).addTo(appState.map);
 
     // Refrescar el overlay del NHC cuando el mapa se mueve o hace zoom
-    appState.map.on('moveend', () => {
-        if (appState.nhcVisible) actualizarNHCOverlay();
-    });
+    appState.map.on('moveend', programarRefrescoNHC);
+    appState.map.on('zoomend', programarRefrescoNHC);
 
     cargarDatosDinamicos();
 }
@@ -314,6 +313,16 @@ function toggleNHC() {
     actualizarNHCOverlay();
 }
 
+let nhcPendingOverlay = null;
+let nhcDebounce = null;
+
+function programarRefrescoNHC() {
+    if (nhcDebounce) clearTimeout(nhcDebounce);
+    nhcDebounce = setTimeout(() => {
+        if (appState.nhcVisible) actualizarNHCOverlay();
+    }, 250);
+}
+
 function actualizarNHCOverlay() {
     if (!appState.nhcVisible || !appState.map) return;
 
@@ -322,7 +331,6 @@ function actualizarNHCOverlay() {
     const ne = b.getNorthEast();
     const size = appState.map.getSize();
 
-    // Orden de dibujo: primero cono (fondo), luego track (medio), luego avisos (arriba)
     const capas = [
         ...NHC_LAYERS.cono,
         ...NHC_LAYERS.track,
@@ -338,30 +346,51 @@ function actualizarNHCOverlay() {
         + `&f=image`;
 
     const btn = document.getElementById('nhc-btn');
+    if (btn) btn.classList.add('loading');
 
-    if (appState.nhcOverlay) {
-        appState.map.removeLayer(appState.nhcOverlay);
+    // Cancelar cualquier carga pendiente (evita superposiciones)
+    if (nhcPendingOverlay) {
+        appState.map.removeLayer(nhcPendingOverlay);
+        nhcPendingOverlay = null;
     }
 
-    appState.nhcOverlay = L.imageOverlay(url, b, {
-        opacity: 0.9,
-        interactive: false,
-        className: 'nhc-overlay'
+    // Nuevo overlay con opacidad 0 — no se verá hasta que cargue
+    const nuevo = L.imageOverlay(url, b, {
+        opacity: 0,
+        interactive: false
     });
 
-    // Cuando la imagen carga (o falla), quitamos el estado de carga
-    appState.nhcOverlay.on('load', () => {
+    let yaAplicado = false;
+
+    nuevo.on('load', () => {
+        if (yaAplicado) return;
+        yaAplicado = true;
+
+        // Remover el viejo
+        if (appState.nhcOverlay && appState.nhcOverlay !== nuevo) {
+            appState.map.removeLayer(appState.nhcOverlay);
+        }
+
+        appState.nhcOverlay = nuevo;
+        nuevo.setOpacity(0.9);
         if (btn) btn.classList.remove('loading');
+        nhcPendingOverlay = null;
     });
-    appState.nhcOverlay.on('error', () => {
+
+    nuevo.on('error', () => {
         if (btn) {
             btn.classList.remove('loading');
             btn.style.borderColor = '#ef4444';
             setTimeout(() => { btn.style.borderColor = ''; }, 3000);
         }
+        if (nhcPendingOverlay === nuevo) {
+            appState.map.removeLayer(nuevo);
+            nhcPendingOverlay = null;
+        }
     });
 
-    appState.nhcOverlay.addTo(appState.map);
+    nhcPendingOverlay = nuevo;
+    nuevo.addTo(appState.map);
 }
 
 function initLocalWeather() {
