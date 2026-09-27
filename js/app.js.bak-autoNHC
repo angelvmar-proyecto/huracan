@@ -172,7 +172,6 @@ async function cargarDatosDinamicos() {
 
     if (data.hayCiclones && data.tormentas && data.tormentas.length > 0) {
         renderizarCiclones(data.tormentas);
-        encenderNHC();
     } else {
         limpiarMapa();
         mostrarAvisoInfo(
@@ -397,18 +396,6 @@ function aplicarCapaRadar(tipo) {
 // =========================================================
 //  CAPAS OFICIALES DEL NHC (Cono, Trayectoria, Avisos)
 // =========================================================
-function encenderNHC() {
-    if (!appState.map) return;
-    if (appState.nhcVisible) {
-        actualizarNHCOverlay();
-        return;
-    }
-    appState.nhcVisible = true;
-    const btn = document.getElementById('nhc-btn');
-    if (btn) btn.classList.add('active', 'loading');
-    actualizarNHCOverlay();
-}
-
 function toggleNHC() {
     appState.nhcVisible = !appState.nhcVisible;
     const btn = document.getElementById('nhc-btn');
