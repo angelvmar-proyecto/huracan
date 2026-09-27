@@ -1,6 +1,55 @@
 {
-  "actualizado": null,
+  "actualizado": "2026-09-27T05:23:40Z",
   "fuente": "NHC/NOAA CurrentStorms.json",
-  "hayCiclones": false,
-  "tormentas": []
+  "hayCiclones": true,
+  "tormentas": [
+    {
+      "id": "al062026",
+      "name": "Fay",
+      "classification": "TD",
+      "intensity": "30",
+      "pressure": "1010",
+      "movementDir": 190,
+      "movementSpeed": 2,
+      "lat": 29.6,
+      "lon": -43.9,
+      "lastUpdate": "2026-09-27T03:00:00.000Z"
+    },
+    {
+      "id": "ep162026",
+      "name": "Odalys",
+      "classification": "HU",
+      "intensity": "70",
+      "pressure": "979",
+      "movementDir": 360,
+      "movementSpeed": 7,
+      "lat": 21.1,
+      "lon": -123.6,
+      "lastUpdate": "2026-09-27T03:00:00.000Z"
+    },
+    {
+      "id": "ep172026",
+      "name": "Polo",
+      "classification": "HU",
+      "intensity": "105",
+      "pressure": "949",
+      "movementDir": 315,
+      "movementSpeed": 10,
+      "lat": 19.3,
+      "lon": -113.1,
+      "lastUpdate": "2026-09-27T03:00:00.000Z"
+    },
+    {
+      "id": "ep152026",
+      "name": "Nolo",
+      "classification": "HU",
+      "intensity": "80",
+      "pressure": "969",
+      "movementDir": 265,
+      "movementSpeed": 8,
+      "lat": 16.7,
+      "lon": -156.5,
+      "lastUpdate": "2026-09-27T03:00:00.000Z"
+    }
+  ]
 }
