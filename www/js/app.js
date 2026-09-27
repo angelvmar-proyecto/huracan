@@ -7,7 +7,18 @@ let appState = {
     legendControl: null,
     ultimoFeed: null,
     origenDatos: null,
-    climaIntervalId: null
+    climaIntervalId: null,
+    nhcVisible: false,
+    nhcOverlay: null
+};
+
+// Capas oficiales del NHC (identificadores extraídos del servicio)
+const NHC_EXPORT_URL = 'https://mapservices.weather.noaa.gov/tropical/rest/services/tropical/NHC_tropical_weather/MapServer/export';
+const NHC_LAYERS = {
+    // Cono de pronóstico — cuenca Atlántico (AT) y Pacífico (EP) y Central (CP)
+    cono:  [8, 34, 60, 86, 112, 138, 164, 190, 216, 242, 268, 294, 320, 346, 372],
+    track: [7, 33, 59, 85, 111, 137, 163, 189, 215, 241, 267, 293, 319, 345, 371],
+    aviso: [9, 35, 61, 87, 113, 139, 165, 191, 217, 243, 269, 295, 321, 347, 373]
 };
 
 // OpenWeatherMap — key existente reutilizada
@@ -26,6 +37,12 @@ function initMap() {
         attribution: '&copy; OpenStreetMap contributors'
     }).addTo(appState.map);
     L.control.zoom({ position: 'topright' }).addTo(appState.map);
+
+    // Refrescar el overlay del NHC cuando el mapa se mueve o hace zoom
+    appState.map.on('moveend', () => {
+        if (appState.nhcVisible) actualizarNHCOverlay();
+    });
+
     cargarDatosDinamicos();
 }
 
@@ -269,6 +286,79 @@ function aplicarCapaRadar(tipo) {
     setTimeout(() => appState.map.invalidateSize(), 150);
 }
 
+// =========================================================
+//  CAPAS OFICIALES DEL NHC (Cono, Trayectoria, Avisos)
+// =========================================================
+function toggleNHC() {
+    appState.nhcVisible = !appState.nhcVisible;
+    const btn = document.getElementById('nhc-btn');
+    if (!btn) return;
+
+    if (!appState.nhcVisible) {
+        if (appState.nhcOverlay) {
+            appState.map.removeLayer(appState.nhcOverlay);
+            appState.nhcOverlay = null;
+        }
+        btn.classList.remove('active', 'loading');
+        btn.innerHTML = '🛰️';
+        return;
+    }
+
+    btn.classList.add('active', 'loading');
+    btn.innerHTML = '🛰️';
+    actualizarNHCOverlay();
+}
+
+function actualizarNHCOverlay() {
+    if (!appState.nhcVisible || !appState.map) return;
+
+    const b = appState.map.getBounds();
+    const sw = b.getSouthWest();
+    const ne = b.getNorthEast();
+    const size = appState.map.getSize();
+
+    // Orden de dibujo: primero cono (fondo), luego track (medio), luego avisos (arriba)
+    const capas = [
+        ...NHC_LAYERS.cono,
+        ...NHC_LAYERS.track,
+        ...NHC_LAYERS.aviso
+    ].join(',');
+
+    const url = NHC_EXPORT_URL
+        + `?bbox=${sw.lng},${sw.lat},${ne.lng},${ne.lat}`
+        + `&bboxSR=4326&imageSR=4326`
+        + `&size=${size.x},${size.y}`
+        + `&format=png32&transparent=true`
+        + `&layers=show:${capas}`
+        + `&f=image`;
+
+    const btn = document.getElementById('nhc-btn');
+
+    if (appState.nhcOverlay) {
+        appState.map.removeLayer(appState.nhcOverlay);
+    }
+
+    appState.nhcOverlay = L.imageOverlay(url, b, {
+        opacity: 0.9,
+        interactive: false,
+        className: 'nhc-overlay'
+    });
+
+    // Cuando la imagen carga (o falla), quitamos el estado de carga
+    appState.nhcOverlay.on('load', () => {
+        if (btn) btn.classList.remove('loading');
+    });
+    appState.nhcOverlay.on('error', () => {
+        if (btn) {
+            btn.classList.remove('loading');
+            btn.style.borderColor = '#ef4444';
+            setTimeout(() => { btn.style.borderColor = ''; }, 3000);
+        }
+    });
+
+    appState.nhcOverlay.addTo(appState.map);
+}
+
 function initLocalWeather() {
     // 1. Pintar un esqueleto mientras llega la ubicación
     const cont = document.getElementById('panel-pronostico');
@@ -413,6 +503,9 @@ function switchTab(tabId, evt) {
     evt.currentTarget.classList.add('active');
     document.getElementById(`panel-${tabId}`).classList.add('active');
     appState.currentTab = tabId;
+    const btn = document.getElementById('nhc-btn');
+    if (btn) btn.style.display = (tabId === 'trayectoria') ? 'flex' : 'none';
+
     if (tabId === 'trayectoria' && appState.map) {
         setTimeout(() => appState.map.invalidateSize(), 150);
     }
