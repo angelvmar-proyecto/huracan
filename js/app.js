@@ -13,7 +13,6 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 function initMap() {
-    // Centrado continental óptimo para las Américas
     appState.map = L.map('map', {
         zoomControl: false
     }).setView([22.0, -88.0], 4);
@@ -35,14 +34,17 @@ function renderActiveStorms() {
     appState.lines = [];
 
     // =========================================================
-    // 1. HURACÁN POLO (Pacífico Nororiental - México)
+    // 1. HURACÁN POLO (Pacífico) - Cono perfectamente alineado
     // =========================================================
     dibujarSistemaCiclones(
         "Huracán Polo (Pacífico)", 
         16.8, -104.2, 
         '#dc2626', '4', 
         [[16.8, -104.2], [17.8, -107.0], [19.5, -110.5], [21.8, -114.5]], 
-        [[16.2, -103.8], [17.4, -103.5], [23.0, -113.0], [20.5, -116.5], [15.8, -105.0]], 
+        [
+            [16.8, -104.2], [17.5, -106.8], [19.0, -110.0], [21.5, -114.0], // Borde superior del cono
+            [22.1, -115.0], [20.0, -111.0], [18.2, -107.2], [16.2, -104.5]  // Borde inferior simétrico
+        ], 
         [
             { lat: 17.8, lon: -107.0, label: 'M', time: '+12h' },
             { lat: 19.5, lon: -110.5, label: 'H', time: '+24h' },
@@ -52,14 +54,17 @@ function renderActiveStorms() {
     );
 
     // =========================================================
-    // 2. HURACÁN ODALYS (Pacífico Norte Abierto)
+    // 2. HURACÁN ODALYS (Pacífico Norte) - Cono alineado
     // =========================================================
     dibujarSistemaCiclones(
         "Huracán Odalys (Pacífico Norte)", 
         24.0, -120.0, 
         '#3b82f6', '1', 
         [[24.0, -120.0], [25.5, -123.5], [27.8, -128.0]], 
-        [[23.0, -119.0], [24.8, -118.5], [29.0, -127.0], [26.5, -130.0]], 
+        [
+            [24.0, -120.0], [25.2, -123.2], [27.5, -127.8],
+            [28.1, -128.2], [25.8, -123.8], [23.8, -120.5]
+        ], 
         [
             { lat: 25.5, lon: -123.5, label: 'H', time: '+12h' },
             { lat: 27.8, lon: -128.0, label: 'T', time: '+24h' }
@@ -68,14 +73,17 @@ function renderActiveStorms() {
     );
 
     // =========================================================
-    // 3. SISTEMA CARIBE Y GOLFO DE MÉXICO (Aguas Abiertas Verificadas)
+    // 3. SISTEMA CARIBE Y GOLFO - Cono alineado en agua
     // =========================================================
     dibujarSistemaCiclones(
         "Perturbación / Caribe Central", 
         16.5, -82.0, 
         '#10b981', 'TT', 
         [[16.5, -82.0], [18.8, -85.0], [21.5, -87.8]], 
-        [[15.5, -81.0], [17.5, -80.5], [22.5, -86.5], [20.0, -89.5]], 
+        [
+            [16.5, -82.0], [18.5, -84.8], [21.2, -87.5],
+            [21.8, -88.1], [19.1, -85.2], [16.2, -82.2]
+        ], 
         [
             { lat: 18.8, lon: -85.0, label: 'T', time: '+18h' },
             { lat: 21.5, lon: -87.8, label: 'H', time: '+36h' }
@@ -84,14 +92,17 @@ function renderActiveStorms() {
     );
 
     // =========================================================
-    // 4. HURACÁN ATLÁNTICO / COSTA ESTE DE ESTADOS UNIDOS
+    // 4. HURACÁN ATLÁNTICO (Costa Este EE.UU.) - Cono alineado
     // =========================================================
     dibujarSistemaCiclones(
         "Huracán Atlántico (Costa Este EE.UU.)", 
         28.0, -70.0, 
         '#8b5cf6', '3', 
         [[28.0, -70.0], [31.5, -74.0], [35.0, -76.5]], 
-        [[27.0, -68.5], [29.5, -67.5], [37.0, -74.5], [33.5, -79.0]], 
+        [
+            [28.0, -70.0], [31.2, -73.8], [34.8, -76.3],
+            [35.2, -76.7], [31.8, -74.2], [28.2, -70.2]
+        ], 
         [
             { lat: 31.5, lon: -74.0, label: 'H', time: '+12h' },
             { lat: 35.0, lon: -76.5, label: 'M', time: '+24h' }
@@ -105,7 +116,7 @@ function dibujarSistemaCiclones(nombre, lat, lon, colorHex, badgeTexto, trayecto
         color: colorHex,
         weight: 1.5,
         fillColor: colorHex,
-        fillOpacity: 0.16,
+        fillOpacity: 0.18,
         dashArray: '4, 4'
     }).addTo(appState.map);
     appState.lines.push(cono);
