@@ -13,9 +13,10 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 function initMap() {
+    // Vista amplia y óptima para el territorio nacional y cuencas circundantes
     appState.map = L.map('map', {
         zoomControl: false
-    }).setView([22.0, -88.0], 4);
+    }).setView([20.0, -98.0], 5);
 
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         maxZoom: 18,
@@ -34,125 +35,124 @@ function renderActiveStorms() {
     appState.lines = [];
 
     // =========================================================
-    // 1. HURACÁN POLO (Pacífico) - Cono perfectamente alineado
+    // LISTA GENERALIZADA DE SISTEMAS (ACTUALES Y FUTUROS)
     // =========================================================
-    dibujarSistemaCiclones(
-        "Huracán Polo (Pacífico)", 
-        16.8, -104.2, 
-        '#dc2626', '4', 
-        [[16.8, -104.2], [17.8, -107.0], [19.5, -110.5], [21.8, -114.5]], 
-        [
-            [16.8, -104.2], [17.5, -106.8], [19.0, -110.0], [21.5, -114.0], // Borde superior del cono
-            [22.1, -115.0], [20.0, -111.0], [18.2, -107.2], [16.2, -104.5]  // Borde inferior simétrico
-        ], 
-        [
-            { lat: 17.8, lon: -107.0, label: 'M', time: '+12h' },
-            { lat: 19.5, lon: -110.5, label: 'H', time: '+24h' },
-            { lat: 21.8, lon: -114.5, label: 'T', time: '+48h' }
-        ],
-        "Desplazamiento al NO a 14 km/h"
-    );
+    const sistemasActivos = [
+        {
+            nombre: "Huracán Polo",
+            lat: 16.8,
+            lon: -104.2,
+            color: '#dc2626',
+            badge: '4',
+            trayectoria: [
+                [16.8, -104.2],
+                [18.2, -107.5],
+                [20.0, -111.0],
+                [22.2, -115.5]
+            ],
+            cono: [
+                [16.8, -104.2], [17.5, -106.8], [19.2, -110.5], [21.8, -115.0],
+                [22.6, -116.0], [20.8, -111.5], [18.8, -107.8], [16.2, -104.5]
+            ],
+            secuenciales: [
+                { lat: 18.2, lon: -107.5, label: 'M', time: '+12h' },
+                { lat: 20.0, lon: -111.0, label: 'H', time: '+24h' },
+                { lat: 22.2, lon: -115.5, label: 'T', time: '+48h' }
+            ],
+            traslacion: "Desplazamiento al Nor-Oeste a 14 km/h"
+        },
+        {
+            nombre: "Huracán Odalys",
+            lat: 22.5,
+            lon: -120.0,
+            color: '#3b82f6',
+            badge: '1',
+            trayectoria: [
+                [22.5, -120.0],
+                [24.2, -123.5],
+                [26.5, -127.5]
+            ],
+            cono: [
+                [22.5, -120.0], [23.8, -123.2], [26.1, -127.2],
+                [26.9, -127.8], [24.5, -123.8], [21.9, -120.5]
+            ],
+            secuenciales: [
+                { lat: 24.2, lon: -123.5, label: 'H', time: '+12h' },
+                { lat: 26.5, lon: -127.5, label: 'T', time: '+24h' }
+            ],
+            traslacion: "Desplazamiento al ONO a 18 km/h"
+        },
+        {
+            nombre: "Perturbación Tropical (Caribe)",
+            lat: 16.5,
+            lon: -84.5,
+            color: '#10b981',
+            badge: 'TT',
+            trayectoria: [
+                [16.5, -84.5],
+                [18.5, -86.8],
+                [21.0, -89.2]
+            ],
+            cono: [
+                [16.5, -84.5], [18.2, -86.5], [20.7, -88.9],
+                [21.3, -89.5], [18.8, -87.1], [16.0, -84.8]
+            ],
+            secuenciales: [
+                { lat: 18.5, lon: -86.8, label: 'T', time: '+18h' },
+                { lat: 21.0, lon: -89.2, label: 'H', time: '+36h' }
+            ],
+            traslacion: "Desplazamiento al Norte a 16 km/h"
+        }
+    ];
 
-    // =========================================================
-    // 2. HURACÁN ODALYS (Pacífico Norte) - Cono alineado
-    // =========================================================
-    dibujarSistemaCiclones(
-        "Huracán Odalys (Pacífico Norte)", 
-        24.0, -120.0, 
-        '#3b82f6', '1', 
-        [[24.0, -120.0], [25.5, -123.5], [27.8, -128.0]], 
-        [
-            [24.0, -120.0], [25.2, -123.2], [27.5, -127.8],
-            [28.1, -128.2], [25.8, -123.8], [23.8, -120.5]
-        ], 
-        [
-            { lat: 25.5, lon: -123.5, label: 'H', time: '+12h' },
-            { lat: 27.8, lon: -128.0, label: 'T', time: '+24h' }
-        ],
-        "Desplazamiento al ONO a 18 km/h"
-    );
+    // Renderizar cada sistema aplicando la misma geometría institucional limpia
+    sistemasActivos.forEach(sys => {
+        // Cono de incertidumbre
+        const conoPoly = L.polygon(sys.cono, {
+            color: sys.color,
+            weight: 1.5,
+            fillColor: sys.color,
+            fillOpacity: 0.3,
+            dashArray: '5, 5'
+        }).addTo(appState.map);
+        appState.lines.push(conoPoly);
 
-    // =========================================================
-    // 3. SISTEMA CARIBE Y GOLFO - Cono alineado en agua
-    // =========================================================
-    dibujarSistemaCiclones(
-        "Perturbación / Caribe Central", 
-        16.5, -82.0, 
-        '#10b981', 'TT', 
-        [[16.5, -82.0], [18.8, -85.0], [21.5, -87.8]], 
-        [
-            [16.5, -82.0], [18.5, -84.8], [21.2, -87.5],
-            [21.8, -88.1], [19.1, -85.2], [16.2, -82.2]
-        ], 
-        [
-            { lat: 18.8, lon: -85.0, label: 'T', time: '+18h' },
-            { lat: 21.5, lon: -87.8, label: 'H', time: '+36h' }
-        ],
-        "Desplazamiento al Nor-Noroeste a 16 km/h"
-    );
+        // Línea central de trayectoria
+        const lineaP = L.polyline(sys.trayectoria, {
+            color: sys.color,
+            weight: 4,
+            opacity: 0.95
+        }).addTo(appState.map);
+        appState.lines.push(lineaP);
 
-    // =========================================================
-    // 4. HURACÁN ATLÁNTICO (Costa Este EE.UU.) - Cono alineado
-    // =========================================================
-    dibujarSistemaCiclones(
-        "Huracán Atlántico (Costa Este EE.UU.)", 
-        28.0, -70.0, 
-        '#8b5cf6', '3', 
-        [[28.0, -70.0], [31.5, -74.0], [35.0, -76.5]], 
-        [
-            [28.0, -70.0], [31.2, -73.8], [34.8, -76.3],
-            [35.2, -76.7], [31.8, -74.2], [28.2, -70.2]
-        ], 
-        [
-            { lat: 31.5, lon: -74.0, label: 'H', time: '+12h' },
-            { lat: 35.0, lon: -76.5, label: 'M', time: '+24h' }
-        ],
-        "Desplazamiento al NNE a 22 km/h"
-    );
-}
-
-function dibujarSistemaCiclones(nombre, lat, lon, colorHex, badgeTexto, trayectoriaCoords, conoCoords, secuenciales, velocidadTraslacion) {
-    const cono = L.polygon(conoCoords, {
-        color: colorHex,
-        weight: 1.5,
-        fillColor: colorHex,
-        fillOpacity: 0.18,
-        dashArray: '4, 4'
-    }).addTo(appState.map);
-    appState.lines.push(cono);
-
-    const lineaTrayectoria = L.polyline(trayectoriaCoords, {
-        color: colorHex,
-        weight: 3.5,
-        opacity: 0.9
-    }).addTo(appState.map);
-    appState.lines.push(lineaTrayectoria);
-
-    secuenciales.forEach(pt => {
-        const seqIcon = L.divIcon({
-            className: 'sequential-marker',
-            html: `<div style="background: white; color: ${colorHex}; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: bold; border: 2px solid ${colorHex}; box-shadow: 0 2px 4px rgba(0,0,0,0.3);">${pt.label}</div>`,
-            iconSize: [24, 24],
-            iconAnchor: [12, 12]
+        // Puntos secuenciales (M, H, T)
+        sys.secuenciales.forEach(pt => {
+            const seqIcon = L.divIcon({
+                className: 'sequential-marker',
+                html: `<div style="background: white; color: ${sys.color}; width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: bold; border: 2.5px solid ${sys.color}; box-shadow: 0 2px 5px rgba(0,0,0,0.4);">${pt.label}</div>`,
+                iconSize: [28, 28],
+                iconAnchor: [14, 14]
+            });
+            const markerSeq = L.marker([pt.lat, pt.lon], { icon: seqIcon })
+                .addTo(appState.map)
+                .bindPopup(`<b>Pronóstico (${pt.time})</b><br>${sys.nombre}`);
+            appState.markers.push(markerSeq);
         });
-        const markerSeq = L.marker([pt.lat, pt.lon], { icon: seqIcon })
+
+        // Marcador principal (Ojo actual del sistema)
+        const principalIcon = L.divIcon({
+            className: 'custom-storm-marker',
+            html: `<div style="background: ${sys.color}; color: white; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 16px; font-weight: bold; box-shadow: 0 0 15px ${sys.color}; border: 2.5px solid #fff;">${sys.badge}</div>`,
+            iconSize: [40, 40],
+            iconAnchor: [20, 20]
+        });
+
+        const mainMarker = L.marker([sys.lat, sys.lon], { icon: principalIcon })
             .addTo(appState.map)
-            .bindPopup(`<b>Pronóstico (${pt.time})</b><br>${nombre}`);
-        appState.markers.push(markerSeq);
+            .bindPopup(`<b>🌀 ${sys.nombre}</b><br><b>Posición Actual (Emisión Oficial)</b><br>🏃‍♂️ ${sys.traslacion}<br>🕒 Actualizado: 26 SEP 2026 - 15:00 UTC`);
+        
+        appState.markers.push(mainMarker);
     });
-
-    const iconoPrincipal = L.divIcon({
-        className: 'custom-storm-marker',
-        html: `<div style="background: ${colorHex}; color: white; width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: bold; box-shadow: 0 0 12px ${colorHex}; border: 2px solid #fff;">${badgeTexto}</div>`,
-        iconSize: [36, 36],
-        iconAnchor: [18, 18]
-    });
-
-    const marker = L.marker([lat, lon], { icon: iconoPrincipal })
-        .addTo(appState.map)
-        .bindPopup(`<b>🌀 ${nombre}</b><br><b>Posición Actual (Emisión Oficial)</b><br>🏃‍♂️ ${velocidadTraslacion}<br>🕒 Actualizado: 26 SEP 2026 - 15:00 UTC`);
-    
-    appState.markers.push(marker);
 }
 
 // =====================================================
@@ -172,41 +172,40 @@ function aplicarCapaRadar(tipo) {
     let htmlLeyenda = "";
     const groupLayers = [];
     const puntosInteres = [
-        { lat: 17.8, lon: -107.0 },
-        { lat: 18.8, lon: -85.0 },
-        { lat: 31.5, lon: -74.0 },
-        { lat: 25.5, lon: -123.5 }
+        { lat: 18.2, lon: -107.5 },
+        { lat: 18.5, lon: -86.8 },
+        { lat: 24.2, lon: -123.5 }
     ];
 
     if (tipo === 'infrarrojo') {
-        tituloLeyenda = "🛰️ Nubes y Masas Nubosas (Américas)";
-        htmlLeyenda = '<div style="font-size:11px; line-height:1.4;"><b>☁️ Iconos:</b> Convección activa en Pacífico, Golfo, Caribe y Atlántico.</div>';
+        tituloLeyenda = "🛰️ Nubes y Masas Nubosas";
+        htmlLeyenda = '<div style="font-size:11px; line-height:1.4;"><b>☁️ Iconos:</b> Convección profunda y bandas espirales activas.</div>';
         puntosInteres.forEach(pt => {
             const icono = L.divIcon({
                 className: 'weather-emoji',
-                html: '<div style="font-size: 24px; text-shadow: 0 0 8px rgba(0,0,0,0.8);">☁️⛈️</div>',
+                html: '<div style="font-size: 26px; text-shadow: 0 0 8px rgba(0,0,0,0.8);">☁️⛈️</div>',
                 iconSize: [30, 30], iconAnchor: [15, 15]
             });
             groupLayers.push(L.marker([pt.lat, pt.lon], { icon: icono }));
         });
     } else if (tipo === 'vientos') {
-        tituloLeyenda = "💨 Vectores de Viento Continental";
-        htmlLeyenda = '<div style="font-size:11px; line-height:1.4;"><b>💨 Símbolos:</b> Flujos de viento y corrientes en las cuencas americanas.</div>';
+        tituloLeyenda = "💨 Vectores de Viento";
+        htmlLeyenda = '<div style="font-size:11px; line-height:1.4;"><b>💨 Símbolos:</b> Flujo ciclónico y rachas intensas.</div>';
         puntosInteres.forEach(pt => {
             const icono = L.divIcon({
                 className: 'weather-emoji',
-                html: '<div style="font-size: 24px; text-shadow: 0 0 8px rgba(0,0,0,0.8);">💨</div>',
+                html: '<div style="font-size: 26px; text-shadow: 0 0 8px rgba(0,0,0,0.8);">💨</div>',
                 iconSize: [30, 30], iconAnchor: [15, 15]
             });
             groupLayers.push(L.marker([pt.lat, pt.lon], { icon: icono }));
         });
     } else if (tipo === 'precipitacion') {
         tituloLeyenda = "🌧️ Zonas de Precipitación";
-        htmlLeyenda = '<div style="font-size:11px; line-height:1.4;"><b>🌧️ Símbolos:</b> Lluvias asociadas a ciclones en el continente.</div>';
+        htmlLeyenda = '<div style="font-size:11px; line-height:1.4;"><b>🌧️ Símbolos:</b> Tormentas severas y acumulados de lluvia.</div>';
         puntosInteres.forEach(pt => {
             const icono = L.divIcon({
                 className: 'weather-emoji',
-                html: '<div style="font-size: 24px; text-shadow: 0 0 8px rgba(0,0,0,0.8);">🌧️⚡</div>',
+                html: '<div style="font-size: 26px; text-shadow: 0 0 8px rgba(0,0,0,0.8);">🌧️⚡</div>',
                 iconSize: [30, 30], iconAnchor: [15, 15]
             });
             groupLayers.push(L.marker([pt.lat, pt.lon], { icon: icono }));
@@ -248,31 +247,23 @@ function initLocalWeather() {
     if (localContainer) {
         localContainer.innerHTML = `
             <div class="panel-content-inner">
-                <h2 class="titulo-panel" style="font-size: 18px; margin-bottom: 4px;">🌎 Monitoreo Panorámico (Las Américas)</h2>
-                <p class="sub-texto" style="margin-bottom: 12px; color: #f59e0b; font-weight: 500;">🕒 Boletín Conjunto SMN / NHC: 26 SEP 2026 - 15:00 UTC</p>
+                <h2 class="titulo-panel" style="font-size: 18px; margin-bottom: 4px;">📍 Clima Local y Emisión Oficial</h2>
+                <p class="sub-texto" style="margin-bottom: 12px; color: #f59e0b; font-weight: 500;">🕒 Último Boletín SMN/CONAGUA: 26 SEP 2026 - 15:00 UTC</p>
 
                 <div class="card-option" style="background: rgba(220, 38, 38, 0.15); border: 1px solid rgba(220, 38, 38, 0.4); margin-bottom: 8px;">
                     <div style="display: flex; justify-content: space-between; font-weight: bold; color: #ef4444;">
-                        <span>🌊 Pacífico (Polo / Odalys)</span>
-                        <span>Cat. 4/5 y Cat. 1</span>
+                        <span>🌊 Huracán Polo (Pacífico)</span>
+                        <span>Cat. 4/5</span>
                     </div>
-                    <div class="sub-texto" style="margin-top: 4px;">🏃‍♂️ <b>Traslación:</b> 14 - 18 km/h al Nor-Oeste</div>
+                    <div class="sub-texto" style="margin-top: 4px;">🏃‍♂️ <b>Traslación:</b> Nor-Oeste a 14 km/h</div>
                 </div>
 
                 <div class="card-option" style="background: rgba(16, 185, 129, 0.15); border: 1px solid rgba(16, 185, 129, 0.4); margin-bottom: 8px;">
                     <div style="display: flex; justify-content: space-between; font-weight: bold; color: #10b981;">
-                        <span>🌴 Caribe y Golfo de México</span>
-                        <span>Perturbación Activa (Mar Abierto)</span>
+                        <span>🌴 Perturbación Caribe</span>
+                        <span>Vigilancia Activa</span>
                     </div>
-                    <div class="sub-texto" style="margin-top: 4px;">🏃‍♂️ <b>Traslación:</b> 16 km/h hacia el Nor-Noroeste</div>
-                </div>
-
-                <div class="card-option" style="background: rgba(139, 92, 246, 0.15); border: 1px solid rgba(139, 92, 246, 0.4); margin-bottom: 8px;">
-                    <div style="display: flex; justify-content: space-between; font-weight: bold; color: #8b5cf6;">
-                        <span>⚡ Atlántico / Costa Este EE.UU.</span>
-                        <span>Huracán Cat. 3</span>
-                    </div>
-                    <div class="sub-texto" style="margin-top: 4px;">🏃‍♂️ <b>Traslación:</b> 22 km/h al NNE (NHC Track)</div>
+                    <div class="sub-texto" style="margin-top: 4px;">🏃‍♂️ <b>Traslación:</b> Norte a 16 km/h</div>
                 </div>
             </div>
         `;
@@ -281,10 +272,10 @@ function initLocalWeather() {
 
 function abrirBoletinOficial(tipo) {
     let urlOficial = "https://smn.conagua.gob.mx/es/ciclones-tropicales/cuenca-del-pacifico";
-    if (tipo === 'nhc') {
-        urlOficial = "https://www.nhc.noaa.gov/";
-    } else if (tipo === 'puertos') {
+    if (tipo === 'puertos') {
         urlOficial = "https://www.gob.mx/semar";
+    } else if (tipo === 'aviso_general') {
+        urlOficial = "https://smn.conagua.gob.mx/es/";
     }
     window.open(urlOficial, '_blank');
 }
