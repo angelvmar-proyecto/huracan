@@ -5,8 +5,14 @@ let appState = {
     lines: [],
     activeRadarLayer: null,
     legendControl: null,
-    ultimoFeed: null
+    ultimoFeed: null,
+    origenDatos: null,
+    climaIntervalId: null
 };
+
+// OpenWeatherMap — key existente reutilizada
+const OWM_KEY = 'eef21ac46e722ea8c4e66d51fd013e9f';
+const UBICACION_FALLBACK = { lat: 21.1619, lon: -86.8515, nombre: 'Cancún' };
 
 document.addEventListener("DOMContentLoaded", () => {
     initMap();
@@ -264,25 +270,134 @@ function aplicarCapaRadar(tipo) {
 }
 
 function initLocalWeather() {
+    // 1. Pintar un esqueleto mientras llega la ubicación
     const cont = document.getElementById('panel-pronostico');
     if (!cont) return;
     cont.innerHTML = `
         <div class="panel-content-inner">
-            <h2 class="titulo-panel" style="font-size:18px; margin-bottom:4px;">📍 Estado del sistema</h2>
-            <p class="sub-texto" style="margin-bottom:12px; color:#10b981; font-weight:500;">
-                ✓ Sincronización automática activa
-            </p>
-            <div class="card-option" style="background:rgba(16,185,129,0.15);
-                        border:1px solid rgba(16,185,129,0.4); margin-bottom:8px;">
-                <div style="display:flex; justify-content:space-between; font-weight:bold; color:#10b981;">
-                    <span>🌐 Fuente</span><span>NHC / NOAA</span>
-                </div>
-                <div class="sub-texto" style="margin-top:4px;">
-                    La app descarga datos oficiales cada 30 minutos desde un servidor de GitHub.
-                    Si no hay ciclones activos, se muestra explícitamente.
-                </div>
-            </div>
+            <h2 class="titulo-panel" style="font-size:18px; margin-bottom:4px;">⛅ Clima local</h2>
+            <div class="sub-texto" style="padding:20px; text-align:center;">⏳ Obteniendo ubicación…</div>
         </div>`;
+
+    // 2. Intentar geolocalización; si falla, usar fallback
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+            pos => cargarClimaLocal(pos.coords.latitude, pos.coords.longitude, null),
+            err => {
+                console.warn('Geolocalización denegada, usando fallback:', err.message);
+                cargarClimaLocal(UBICACION_FALLBACK.lat, UBICACION_FALLBACK.lon, UBICACION_FALLBACK.nombre);
+            },
+            { enableHighAccuracy: false, timeout: 6000, maximumAge: 600000 }
+        );
+    } else {
+        cargarClimaLocal(UBICACION_FALLBACK.lat, UBICACION_FALLBACK.lon, UBICACION_FALLBACK.nombre);
+    }
+}
+
+async function cargarClimaLocal(lat, lon, nombreFallback) {
+    const cont = document.getElementById('panel-pronostico');
+    if (!cont) return;
+
+    try {
+        const url = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${OWM_KEY}&units=metric&lang=es`;
+        const r = await fetch(url, { cache: 'no-store' });
+        if (!r.ok) throw new Error('HTTP ' + r.status);
+        const d = await r.json();
+
+        const temp = Math.round(d.main.temp);
+        const tempMin = Math.round(d.main.temp_min);
+        const tempMax = Math.round(d.main.temp_max);
+        const sens = Math.round(d.main.feels_like);
+        const hum = d.main.humidity;
+        const pres = d.main.pressure;
+        const vientoMs = d.wind.speed;
+        const vientoNudos = Math.round(vientoMs * 1.94384);
+        const desc = d.weather[0].description;
+        const icono = d.weather[0].icon;
+        const ciudad = nombreFallback || d.name || 'Tu ubicación';
+
+        // Semáforo de viento (inspirado en banderas de playa)
+        let estadoColor = '#10b981';
+        let estadoTxt = 'Condiciones normales';
+        if (vientoNudos >= 48) {
+            estadoColor = '#ef4444';
+            estadoTxt = 'Vientos de tormenta tropical';
+        } else if (vientoNudos >= 34) {
+            estadoColor = '#f59e0b';
+            estadoTxt = 'Vientos fuertes';
+        } else if (vientoNudos >= 22) {
+            estadoColor = '#eab308';
+            estadoTxt = 'Viento moderado';
+        }
+
+        cont.innerHTML = `
+            <div class="panel-content-inner">
+                <h2 class="titulo-panel" style="font-size:18px; margin-bottom:8px;">⛅ Clima local</h2>
+                <p class="sub-texto" style="margin-bottom:12px; color:#8a7a5a;">
+                    📍 ${ciudad}
+                </p>
+
+                <div class="card-option" style="background:rgba(15,23,42,0.6); border:1px solid rgba(255,255,255,0.08); display:flex; align-items:center; gap:14px;">
+                    <img src="https://openweathermap.org/img/wn/${icono}@2x.png" style="width:64px; height:64px;" alt="${desc}">
+                    <div style="flex:1;">
+                        <div style="font-size:32px; font-weight:800; color:#fff;">${temp}°C</div>
+                        <div class="sub-texto" style="text-transform:capitalize;">${desc}</div>
+                        <div class="sub-texto" style="font-size:11px; margin-top:2px;">
+                            Sensación ${sens}°C · Mín ${tempMin}° / Máx ${tempMax}°
+                        </div>
+                    </div>
+                </div>
+
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:12px;">
+                    <div class="card-option" style="background:rgba(15,23,42,0.6); border:1px solid rgba(255,255,255,0.08); text-align:center; padding:10px;">
+                        <div class="sub-texto" style="font-size:11px;">Viento</div>
+                        <div style="font-size:16px; font-weight:700; color:#fff; margin-top:2px;">${vientoNudos} kt</div>
+                    </div>
+                    <div class="card-option" style="background:rgba(15,23,42,0.6); border:1px solid rgba(255,255,255,0.08); text-align:center; padding:10px;">
+                        <div class="sub-texto" style="font-size:11px;">Humedad</div>
+                        <div style="font-size:16px; font-weight:700; color:#fff; margin-top:2px;">${hum}%</div>
+                    </div>
+                    <div class="card-option" style="background:rgba(15,23,42,0.6); border:1px solid rgba(255,255,255,0.08); text-align:center; padding:10px;">
+                        <div class="sub-texto" style="font-size:11px;">Presión</div>
+                        <div style="font-size:16px; font-weight:700; color:#fff; margin-top:2px;">${pres} hPa</div>
+                    </div>
+                    <div class="card-option" style="background:rgba(15,23,42,0.6); border:1px solid rgba(255,255,255,0.08); text-align:center; padding:10px;">
+                        <div class="sub-texto" style="font-size:11px;">Actualizado</div>
+                        <div style="font-size:16px; font-weight:700; color:#fff; margin-top:2px;">
+                            ${new Date().toLocaleTimeString('es-MX', {hour:'2-digit', minute:'2-digit'})}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card-option" style="margin-top:12px; background:${estadoColor}22; border:1px solid ${estadoColor}; padding:10px;">
+                    <div style="font-size:13px; font-weight:700; color:${estadoColor};">
+                        ${estadoTxt}
+                    </div>
+                    <div class="sub-texto" style="font-size:11px; margin-top:3px;">
+                        Umbrales: >48 kt tormenta · >34 kt fuertes · >22 kt moderado
+                    </div>
+                </div>
+
+                <div class="sub-texto" style="font-size:11px; margin-top:10px; text-align:center;">
+                    Fuente: OpenWeatherMap · Datos informativos
+                </div>
+            </div>`;
+
+        // Refrescar cada 10 minutos
+        if (appState.climaIntervalId) clearInterval(appState.climaIntervalId);
+        appState.climaIntervalId = setInterval(() => cargarClimaLocal(lat, lon, nombreFallback), 600000);
+
+    } catch (e) {
+        console.error('Error clima local:', e);
+        cont.innerHTML = `
+            <div class="panel-content-inner">
+                <h2 class="titulo-panel" style="font-size:18px; margin-bottom:8px;">⛅ Clima local</h2>
+                <div class="card-option" style="background:rgba(239,68,68,0.15); border:1px solid rgba(239,68,68,0.4);">
+                    <div style="color:#ef4444; font-weight:600;">⚠️ Sin conexión con OpenWeatherMap</div>
+                    <div class="sub-texto" style="margin-top:4px;">${e.message}</div>
+                </div>
+            </div>`;
+    }
 }
 
 function abrirBoletinOficial(tipo) {
