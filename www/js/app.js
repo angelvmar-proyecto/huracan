@@ -172,6 +172,7 @@ async function cargarDatosDinamicos() {
 
     if (data.hayCiclones && data.tormentas && data.tormentas.length > 0) {
         renderizarCiclones(data.tormentas);
+        encenderNHC();
     } else {
         limpiarMapa();
         mostrarAvisoInfo(
@@ -316,8 +317,9 @@ function renderizarAlertasDinamicas(tormentas) {
     cont.innerHTML = tormentas.map(t => {
         const color = colorPorClasificacion(t.classification);
         return `
-            <div class="alert-card warning" onclick="abrirBoletinOficial('smn')"
-                 style="cursor:pointer; border-left:4px solid ${color}; margin-bottom:10px;">
+            <a href="https://smn.conagua.gob.mx/es/" target="_blank" rel="noopener"
+               class="alert-card warning"
+               style="display:block; text-decoration:none; color:inherit; border-left:4px solid ${color}; margin-bottom:10px;">
                 <div style="font-weight:bold; color:${color};">
                     🌀 ${t.name} (${t.classification || 'N/D'})
                 </div>
@@ -325,47 +327,120 @@ function renderizarAlertasDinamicas(tormentas) {
                     Viento: ${t.intensity || 'N/D'} kt · Presión: ${t.pressure || 'N/D'} mb ·
                     Movimiento: ${rumboTexto(t.movementDir)} a ${t.movementSpeed || 'N/D'} kt
                 </div>
-            </div>`;
+            </a>`;
     }).join('');
 }
 
-function aplicarCapaRadar(tipo) {
-    if (appState.activeRadarLayer) {
-        appState.map.removeLayer(appState.activeRadarLayer);
-        appState.activeRadarLayer = null;
-    }
-    if (appState.legendControl) {
-        appState.map.removeControl(appState.legendControl);
-        appState.legendControl = null;
-    }
+let radarTileLayer = null;
+let radarLegend = null;
+let radarIntervalId = null;
+let radarActivo = false;
 
-    let titulo = "", html = "";
-    const capas = [];
-
-    if (tipo === 'infrarrojo') {
-        titulo = "🛰️ Nubes (ilustrativo)";
-        html = '<div style="font-size:11px;">Capa decorativa. No es imagen satelital en vivo.</div>';
-        capas.push(L.marker([18.5, -95.0], {
-            icon: L.divIcon({ className: 'w', html: '<div style="font-size:26px;">☁️⛈️</div>', iconSize: [30,30], iconAnchor: [15,15] })
-        }));
-    } else if (tipo === 'vientos') {
-        titulo = "💨 Viento (ilustrativo)";
-        html = '<div style="font-size:11px;">Capa decorativa. No es dato medido.</div>';
-        capas.push(L.marker([18.5, -95.0], {
-            icon: L.divIcon({ className: 'w', html: '<div style="font-size:26px;">💨</div>', iconSize: [30,30], iconAnchor: [15,15] })
-        }));
-    } else if (tipo === 'precipitacion') {
-        titulo = "🌧️ Lluvia (ilustrativo)";
-        html = '<div style="font-size:11px;">Capa decorativa. No es radar pluvial.</div>';
-        capas.push(L.marker([18.5, -95.0], {
-            icon: L.divIcon({ className: 'w', html: '<div style="font-size:26px;">🌧️⚡</div>', iconSize: [30,30], iconAnchor: [15,15] })
-        }));
+async function toggleRadar() {
+    // Apagar si ya está encendido
+    if (radarActivo) {
+        apagarRadar();
+        return;
     }
 
-    appState.activeRadarLayer = L.layerGroup(capas).addTo(appState.map);
+    const titulo = document.getElementById('radar-toggle-title');
+    const status = document.getElementById('radar-toggle-status');
+    if (titulo) titulo.textContent = '⏳ Cargando radar…';
+    if (status) status.textContent = 'Obteniendo datos de RainViewer';
 
-    const LegendControl = L.Control.extend({
-        options: { position: 'topleft' },
+    try {
+        const r = await fetch('https://api.rainviewer.com/public/weather-maps.json', { cache: 'no-store' });
+        if (!r.ok) throw new Error('HTTP ' + r.status);
+        const data = await r.json();
+        const frames = data.radar && data.radar.past;
+        if (!frames || frames.length === 0) throw new Error('Sin datos de radar');
+
+        const ultimo = frames[frames.length - 1];
+        const hora = ultimo.time;
+        const horaTexto = new Date(hora * 1000).toLocaleTimeString('es-MX', { hour: '2-digit', minute: '2-digit' });
+
+        const urlTiles = `https://tilecache.rainviewer.com/v2/radar/${hora}/256/{z}/{x}/{y}/2/1_1.png`;
+
+        radarTileLayer = L.tileLayer(urlTiles, {
+            opacity: 0.75,
+            attribution: 'RainViewer',
+            zIndex: 500
+        }).addTo(appState.map);
+
+        // Leyenda
+        const LegendControl = L.Control.extend({
+            options: { position: 'topleft' },
+            onAdd: function () {
+                const div = L.DomUtil.create('div', 'info-legend-radar');
+                div.style.background = 'rgba(15,23,42,0.95)';
+                div.style.color = '#fff';
+                div.style.padding = '10px 14px';
+                div.style.borderRadius = '8px';
+                div.style.border = '1px solid rgba(255,255,255,0.15)';
+                div.style.fontSize = '11px';
+                div.innerHTML = `<b style="color:#f59e0b; font-size:12px;">📡 Radar de lluvia</b>
+                    <hr style="border:0; border-top:1px solid rgba(255,255,255,0.2); margin:4px 0;">
+                    <div>Último frame: <b>${horaTexto}</b></div>
+                    <div style="display:flex; align-items:center; margin-top:6px; gap:6px;">
+                        <div style="width:80px; height:8px; border-radius:4px; background:linear-gradient(to right, #00d4ff, #00ff00, #ffff00, #ff8800, #ff0000);"></div>
+                    </div>
+                    <div style="font-size:10px; color:#8a7a5a; margin-top:2px;">Débil → Fuerte</div>
+                    <button onclick="this.parentElement.remove()" style="background:none;border:none;color:#aaa;cursor:pointer;float:right;font-size:14px;margin-top:-30px;">×</button>`;
+                return div;
+            }
+        });
+        radarLegend = new LegendControl();
+        appState.map.addControl(radarLegend);
+
+        radarActivo = true;
+        const boton = document.getElementById('radar-toggle');
+        if (boton) boton.style.borderLeft = '4px solid #10b981';
+        if (titulo) titulo.textContent = '🌧️ Radar activo — toca para apagar';
+        if (status) status.textContent = `Último frame: ${horaTexto} · actualiza cada 10 min`;
+
+        // Auto-refresh cada 10 minutos
+        radarIntervalId = setInterval(async () => {
+            if (!radarActivo) return;
+            try {
+                const rr = await fetch('https://api.rainviewer.com/public/weather-maps.json', { cache: 'no-store' });
+                const dd = await rr.json();
+                const ff = dd.radar && dd.radar.past;
+                if (ff && ff.length > 0) {
+                    const nuevoTime = ff[ff.length - 1].time;
+                    radarTileLayer.setUrl(`https://tilecache.rainviewer.com/v2/radar/${nuevoTime}/256/{z}/{x}/{y}/2/1_1.png`);
+                }
+            } catch (e) { console.warn('Refresh radar falló:', e); }
+        }, 10 * 60 * 1000);
+
+    } catch (e) {
+        console.error('Radar error:', e);
+        if (titulo) titulo.textContent = '🌧️ Activar radar de precipitación';
+        if (status) status.textContent = 'Error al cargar. Intenta de nuevo.';
+    }
+}
+
+function apagarRadar() {
+    if (radarTileLayer) {
+        appState.map.removeLayer(radarTileLayer);
+        radarTileLayer = null;
+    }
+    if (radarLegend) {
+        appState.map.removeControl(radarLegend);
+        radarLegend = null;
+    }
+    if (radarIntervalId) {
+        clearInterval(radarIntervalId);
+        radarIntervalId = null;
+    }
+    radarActivo = false;
+    const boton = document.getElementById('radar-toggle');
+    if (boton) boton.style.borderLeft = '';
+    const titulo = document.getElementById('radar-toggle-title');
+    const status = document.getElementById('radar-toggle-status');
+    if (titulo) titulo.textContent = '🌧️ Activar radar de precipitación';
+    if (status) status.textContent = 'Toca para ver la lluvia en el mapa';
+}
+,
         onAdd: function () {
             const div = L.DomUtil.create('div', 'info-legend');
             div.style.background = 'rgba(15,23,42,0.95)';
@@ -494,6 +569,22 @@ function actualizarNHCOverlay() {
 
     nhcPendingOverlay = nuevo;
     nuevo.addTo(appState.map);
+}
+
+function encenderNHC() {
+    if (!appState.map) return;
+    const btn = document.getElementById('nhc-btn');
+    if (appState.nhcVisible) {
+        // Ya está encendida: solo refrescar para el nuevo estado
+        actualizarNHCOverlay();
+        return;
+    }
+    appState.nhcVisible = true;
+    if (btn) {
+        btn.classList.add('active', 'loading');
+        btn.innerHTML = '🛰️';
+    }
+    actualizarNHCOverlay();
 }
 
 function initLocalWeather() {

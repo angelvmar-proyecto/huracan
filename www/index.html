@@ -63,27 +63,21 @@
     <!-- PANEL 2: RADAR (CAPAS ILUSTRATIVAS) -->
     <div id="panel-radar" class="weather-panel">
         <div class="panel-content-inner">
-            <h2 class="titulo-panel" style="font-size:18px; margin-bottom:12px;">📡 Capas Visuales</h2>
+            <h2 class="titulo-panel" style="font-size:18px; margin-bottom:12px;">📡 Radar de precipitación</h2>
             <p class="sub-texto" style="margin-bottom:16px;">
-                Capas decorativas. No representan datos satelitales ni de radar en tiempo real.
+                Radar real. Datos de RainViewer, actualizado cada 10 minutos.
             </p>
-
-            <div class="card-option" onclick="aplicarCapaRadar('infrarrojo')">
-                <div style="font-weight:600; color:#f59e0b;">🛰️ Nubes (ilustrativo)</div>
-                <div class="sub-texto">Icono de referencia</div>
+            <div class="card-option" id="radar-toggle" onclick="toggleRadar()" style="cursor:pointer;">
+                <div style="font-weight:600; color:#f59e0b;" id="radar-toggle-title">🌧️ Activar radar de precipitación</div>
+                <div class="sub-texto" id="radar-toggle-status">Toca para ver la lluvia en el mapa</div>
             </div>
-            <div class="card-option" style="margin-top:12px;" onclick="aplicarCapaRadar('vientos')">
-                <div style="font-weight:600; color:#f59e0b;">💨 Viento (ilustrativo)</div>
-                <div class="sub-texto">Icono de referencia</div>
-            </div>
-            <div class="card-option" style="margin-top:12px;" onclick="aplicarCapaRadar('precipitacion')">
-                <div style="font-weight:600; color:#f59e0b;">🌧️ Lluvia (ilustrativo)</div>
-                <div class="sub-texto">Icono de referencia</div>
+            <div class="card-option" style="margin-top:12px;">
+                <div style="font-weight:600; color:#f59e0b;">ℹ️ Cómo se ve</div>
+                <div class="sub-texto">Los colores van de azul (lluvia ligera) a rojo (lluvia intensa). Si no ves nada, no está lloviendo en la zona visible.</div>
             </div>
         </div>
     </div>
 
-    <!-- PANEL 3: ALERTAS DINÁMICAS -->
     <div id="panel-alertas" class="weather-panel">
         <div class="panel-content-inner">
             <h2 class="titulo-panel" style="font-size:18px; margin-bottom:6px;">🚨 Sistemas Activos</h2>
@@ -98,26 +92,27 @@
             <hr style="border:0; border-top:1px solid rgba(255,255,255,0.15); margin:16px 0;">
             <p class="sub-texto" style="margin-bottom:12px;">Boletines oficiales:</p>
 
-            <div class="alert-card warning" onclick="abrirBoletinOficial('smn')" style="cursor:pointer;">
+            <a href="https://smn.conagua.gob.mx/es/" target="_blank" rel="noopener"
+               class="alert-card warning" style="display:block; text-decoration:none; color:inherit;">
                 <div style="font-weight:bold; color:#f59e0b;">🟡 Ciclones Tropicales (SMN) ↗</div>
                 <div class="sub-texto" style="margin-top:4px;">
                     Servicio Meteorológico Nacional.
                 </div>
-            </div>
-            <div class="alert-card info" onclick="abrirBoletinOficial('puertos')"
-                 style="cursor:pointer; margin-top:12px;">
+            </a>
+            <a href="https://www.gob.mx/semar" target="_blank" rel="noopener"
+               class="alert-card info" style="display:block; text-decoration:none; color:inherit; margin-top:12px;">
                 <div style="font-weight:bold; color:#f59e0b;">⚓ Avisos a Puertos (SEMAR) ↗</div>
                 <div class="sub-texto" style="margin-top:4px;">
                     Secretaría de Marina.
                 </div>
-            </div>
-            <div class="alert-card info" onclick="abrirBoletinOficial('aviso_general')"
-                 style="cursor:pointer; margin-top:12px; border-left:4px solid #3b82f6;">
+            </a>
+            <a href="https://smn.conagua.gob.mx/es/" target="_blank" rel="noopener"
+               class="alert-card info" style="display:block; text-decoration:none; color:inherit; margin-top:12px; border-left:4px solid #3b82f6;">
                 <div style="font-weight:bold; color:#3b82f6;">🔵 Pronóstico General (CONAGUA) ↗</div>
                 <div class="sub-texto" style="margin-top:4px;">
                     Reporte nacional del clima.
                 </div>
-            </div>
+            </a>
         </div>
     </div>
 
