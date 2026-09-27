@@ -23,9 +23,6 @@ function initMap() {
     cargarDatosDinamicos();
 }
 
-// =========================================================
-//  CARGA DE DATOS
-// =========================================================
 async function cargarDatosDinamicos() {
     try {
         const r = await fetch('./clima_activo.json', { cache: 'no-store' });
@@ -61,9 +58,6 @@ function limpiarMapa() {
     appState.lines = [];
 }
 
-// =========================================================
-//  DIBUJO DE CICLONES REALES (SIN CONOS INVENTADOS)
-// =========================================================
 function colorPorClasificacion(c) {
     switch ((c || '').toUpperCase()) {
         case 'TD': return '#3b82f6';
@@ -120,9 +114,6 @@ function renderizarCiclones(tormentas) {
     }
 }
 
-// =========================================================
-//  AVISOS EN EL MAPA
-// =========================================================
 function mostrarAvisoInfo(titulo, mensaje) {
     const card = L.marker([23.6345, -102.5528], {
         icon: L.divIcon({
@@ -139,9 +130,6 @@ function mostrarAvisoInfo(titulo, mensaje) {
     appState.markers.push(card);
 }
 
-// =========================================================
-//  INFO CARD + ALERTAS DINÁMICAS
-// =========================================================
 function renderizarInfoCard(data) {
     const card = document.getElementById('info-card-mapa');
     if (!card) return;
@@ -211,9 +199,6 @@ function renderizarAlertasDinamicas(tormentas) {
     }).join('');
 }
 
-// =========================================================
-//  CAPAS VISUALES (DECORATIVAS — ETIQUETADAS COMO TAL)
-// =========================================================
 function aplicarCapaRadar(tipo) {
     if (appState.activeRadarLayer) {
         appState.map.removeLayer(appState.activeRadarLayer);
@@ -278,9 +263,6 @@ function aplicarCapaRadar(tipo) {
     setTimeout(() => appState.map.invalidateSize(), 150);
 }
 
-// =========================================================
-//  CLIMA LOCAL / ESTADO
-// =========================================================
 function initLocalWeather() {
     const cont = document.getElementById('panel-pronostico');
     if (!cont) return;
