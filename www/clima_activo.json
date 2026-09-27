@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-09-27T15:33:13Z",
+  "actualizado": "2026-09-27T19:37:58Z",
   "fuente": "NHC/NOAA CurrentStorms.json",
   "hayCiclones": true,
   "tormentas": [
@@ -32,12 +32,12 @@
       "name": "Polo",
       "classification": "HU",
       "intensity": "110",
-      "pressure": "949",
+      "pressure": "950",
       "movementDir": 345,
       "movementSpeed": 12,
       "lat": 21.3,
-      "lon": -113.9,
-      "lastUpdate": "2026-09-27T15:00:00.000Z"
+      "lon": -114,
+      "lastUpdate": "2026-09-27T18:00:00.000Z"
     },
     {
       "id": "ep182026",
