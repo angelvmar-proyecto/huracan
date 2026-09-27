@@ -13,10 +13,10 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 function initMap() {
-    // Centrado panorámico para abarcar todo el continente americano (Pacífico, Golfo, Caribe, EE.UU. y Atlántico)
+    // Centrado continental óptimo para las Américas
     appState.map = L.map('map', {
         zoomControl: false
-    }).setView([24.0, -90.0], 3);
+    }).setView([22.0, -88.0], 4);
 
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         maxZoom: 18,
@@ -35,7 +35,7 @@ function renderActiveStorms() {
     appState.lines = [];
 
     // =========================================================
-    // 1. HURACÁN POLO (Pacífico - Cat. 4/5)
+    // 1. HURACÁN POLO (Pacífico Nororiental - México)
     // =========================================================
     dibujarSistemaCiclones(
         "Huracán Polo (Pacífico)", 
@@ -52,39 +52,39 @@ function renderActiveStorms() {
     );
 
     // =========================================================
-    // 2. HURACÁN ODALYS (Pacífico Abierto)
+    // 2. HURACÁN ODALYS (Pacífico Norte Abierto)
     // =========================================================
     dibujarSistemaCiclones(
         "Huracán Odalys (Pacífico Norte)", 
-        22.5, -122.0, 
+        24.0, -120.0, 
         '#3b82f6', '1', 
-        [[22.5, -122.0], [24.0, -125.0], [26.2, -129.5]], 
-        [[21.8, -121.5], [23.2, -121.0], [27.5, -128.5], [25.0, -131.0]], 
+        [[24.0, -120.0], [25.5, -123.5], [27.8, -128.0]], 
+        [[23.0, -119.0], [24.8, -118.5], [29.0, -127.0], [26.5, -130.0]], 
         [
-            { lat: 24.0, lon: -125.0, label: 'H', time: '+12h' },
-            { lat: 26.2, lon: -129.5, label: 'T', time: '+24h' }
+            { lat: 25.5, lon: -123.5, label: 'H', time: '+12h' },
+            { lat: 27.8, lon: -128.0, label: 'T', time: '+24h' }
         ],
         "Desplazamiento al ONO a 18 km/h"
     );
 
     // =========================================================
-    // 3. TORMENTA TROPICAL / CARIBE Y GOLFO DE MÉXICO
+    // 3. SISTEMA CARIBE Y GOLFO DE MÉXICO (Aguas Abiertas Verificadas)
     // =========================================================
     dibujarSistemaCiclones(
-        "Sistema Caribe / Golfo", 
-        18.5, -88.0, 
+        "Perturbación / Caribe Central", 
+        16.5, -82.0, 
         '#10b981', 'TT', 
-        [[18.5, -88.0], [21.0, -90.5], [24.5, -93.0]], 
-        [[17.5, -87.0], [19.5, -86.5], [26.0, -92.0], [23.0, -95.0]], 
+        [[16.5, -82.0], [18.8, -85.0], [21.5, -87.8]], 
+        [[15.5, -81.0], [17.5, -80.5], [22.5, -86.5], [20.0, -89.5]], 
         [
-            { lat: 21.0, lon: -90.5, label: 'T', time: '+12h' },
-            { lat: 24.5, lon: -93.0, label: 'H', time: '+24h' }
+            { lat: 18.8, lon: -85.0, label: 'T', time: '+18h' },
+            { lat: 21.5, lon: -87.8, label: 'H', time: '+36h' }
         ],
-        "Desplazamiento al Norte a 16 km/h"
+        "Desplazamiento al Nor-Noroeste a 16 km/h"
     );
 
     // =========================================================
-    // 4. HURACÁN EN EL ATLÁNTICO / COSTA ESTE DE ESTADOS UNIDOS
+    // 4. HURACÁN ATLÁNTICO / COSTA ESTE DE ESTADOS UNIDOS
     // =========================================================
     dibujarSistemaCiclones(
         "Huracán Atlántico (Costa Este EE.UU.)", 
@@ -145,7 +145,7 @@ function dibujarSistemaCiclones(nombre, lat, lon, colorHex, badgeTexto, trayecto
 }
 
 // =====================================================
-//  CAPAS VISUALES Y CLIMA LOCAL / PANORÁMICO
+//  CAPAS VISUALES Y CLIMA LOCAL
 // =====================================================
 function aplicarCapaRadar(tipo) {
     if (appState.activeRadarLayer) {
@@ -162,9 +162,9 @@ function aplicarCapaRadar(tipo) {
     const groupLayers = [];
     const puntosInteres = [
         { lat: 17.8, lon: -107.0 },
-        { lat: 21.0, lon: -90.5 },
+        { lat: 18.8, lon: -85.0 },
         { lat: 31.5, lon: -74.0 },
-        { lat: 24.0, lon: -125.0 }
+        { lat: 25.5, lon: -123.5 }
     ];
 
     if (tipo === 'infrarrojo') {
@@ -251,9 +251,9 @@ function initLocalWeather() {
                 <div class="card-option" style="background: rgba(16, 185, 129, 0.15); border: 1px solid rgba(16, 185, 129, 0.4); margin-bottom: 8px;">
                     <div style="display: flex; justify-content: space-between; font-weight: bold; color: #10b981;">
                         <span>🌴 Caribe y Golfo de México</span>
-                        <span>Perturbación Activa</span>
+                        <span>Perturbación Activa (Mar Abierto)</span>
                     </div>
-                    <div class="sub-texto" style="margin-top: 4px;">🏃‍♂️ <b>Traslación:</b> 16 km/h hacia el Norte</div>
+                    <div class="sub-texto" style="margin-top: 4px;">🏃‍♂️ <b>Traslación:</b> 16 km/h hacia el Nor-Noroeste</div>
                 </div>
 
                 <div class="card-option" style="background: rgba(139, 92, 246, 0.15); border: 1px solid rgba(139, 92, 246, 0.4); margin-bottom: 8px;">
