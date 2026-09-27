@@ -31,12 +31,7 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 function initMap() {
-    appState.map = L.map('map', {
-        zoomControl: false,
-        worldCopyJump: false,
-        maxBounds: [[-75, -175], [75, 175]],
-        maxBoundsViscosity: 1.0
-    }).setView([20.0, -98.0], 4);
+    appState.map = L.map('map', { zoomControl: false }).setView([20.0, -98.0], 4);
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         maxZoom: 18,
         attribution: '&copy; OpenStreetMap contributors'
