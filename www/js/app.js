@@ -509,6 +509,112 @@ function actualizarNHCOverlay() {
     nuevo.addTo(appState.map);
 }
 
+let radarTileLayer = null;
+let radarLegend = null;
+let radarIntervalId = null;
+let radarActivo = false;
+
+async function toggleRadar() {
+    if (radarActivo) {
+        apagarRadar();
+        return;
+    }
+
+    const titulo = document.getElementById('radar-toggle-title');
+    const status = document.getElementById('radar-toggle-status');
+    const boton  = document.getElementById('radar-toggle');
+
+    if (titulo) titulo.textContent = '⏳ Cargando radar…';
+    if (status) status.textContent = 'Obteniendo datos de RainViewer';
+
+    try {
+        const r = await fetch('https://api.rainviewer.com/public/weather-maps.json', { cache: 'no-store' });
+        if (!r.ok) throw new Error('HTTP ' + r.status);
+        const data = await r.json();
+        const frames = data.radar && data.radar.past;
+        if (!frames || frames.length === 0) throw new Error('Sin datos de radar');
+
+        const ultimo = frames[frames.length - 1];
+        const hora = ultimo.time;
+        const horaTexto = new Date(hora * 1000).toLocaleTimeString('es-MX', { hour: '2-digit', minute: '2-digit' });
+
+        const urlTiles = `https://tilecache.rainviewer.com/v2/radar/${hora}/256/{z}/{x}/{y}/2/1_1.png`;
+
+        radarTileLayer = L.tileLayer(urlTiles, {
+            opacity: 0.75,
+            attribution: 'RainViewer',
+            zIndex: 500
+        }).addTo(appState.map);
+
+        const LegendControl = L.Control.extend({
+            options: { position: 'topleft' },
+            onAdd: function () {
+                const div = L.DomUtil.create('div', 'info-legend-radar');
+                div.style.background = 'rgba(15,23,42,0.95)';
+                div.style.color = '#fff';
+                div.style.padding = '10px 14px';
+                div.style.borderRadius = '8px';
+                div.style.border = '1px solid rgba(255,255,255,0.15)';
+                div.style.fontSize = '11px';
+                div.innerHTML = `<b style="color:#f59e0b; font-size:12px;">📡 Radar de lluvia</b>
+                    <hr style="border:0; border-top:1px solid rgba(255,255,255,0.2); margin:4px 0;">
+                    <div>Último frame: <b>${horaTexto}</b></div>
+                    <div style="width:120px; height:8px; border-radius:4px; margin-top:6px; background:linear-gradient(to right, #00d4ff, #00ff00, #ffff00, #ff8800, #ff0000);"></div>
+                    <div style="font-size:10px; color:#8a7a5a; margin-top:2px;">Débil → Fuerte</div>
+                    <button onclick="this.parentElement.remove()" style="background:none;border:none;color:#aaa;cursor:pointer;float:right;font-size:16px;margin-top:-30px;">×</button>`;
+                return div;
+            }
+        });
+        radarLegend = new LegendControl();
+        appState.map.addControl(radarLegend);
+
+        radarActivo = true;
+        if (boton) boton.style.borderLeft = '4px solid #10b981';
+        if (titulo) titulo.textContent = '🌧️ Radar activo — toca para apagar';
+        if (status) status.textContent = `Último frame: ${horaTexto} · actualiza cada 10 min`;
+
+        radarIntervalId = setInterval(async () => {
+            if (!radarActivo || !radarTileLayer) return;
+            try {
+                const rr = await fetch('https://api.rainviewer.com/public/weather-maps.json', { cache: 'no-store' });
+                const dd = await rr.json();
+                const ff = dd.radar && dd.radar.past;
+                if (ff && ff.length > 0) {
+                    const nuevoTime = ff[ff.length - 1].time;
+                    radarTileLayer.setUrl(`https://tilecache.rainviewer.com/v2/radar/${nuevoTime}/256/{z}/{x}/{y}/2/1_1.png`);
+                }
+            } catch (e) { console.warn('Refresh radar falló:', e); }
+        }, 10 * 60 * 1000);
+
+    } catch (e) {
+        console.error('Radar error:', e);
+        if (titulo) titulo.textContent = '🌧️ Activar radar de precipitación';
+        if (status) status.textContent = 'Error al cargar. Intenta de nuevo.';
+    }
+}
+
+function apagarRadar() {
+    if (radarTileLayer && appState.map) {
+        appState.map.removeLayer(radarTileLayer);
+        radarTileLayer = null;
+    }
+    if (radarLegend && appState.map) {
+        appState.map.removeControl(radarLegend);
+        radarLegend = null;
+    }
+    if (radarIntervalId) {
+        clearInterval(radarIntervalId);
+        radarIntervalId = null;
+    }
+    radarActivo = false;
+    const boton = document.getElementById('radar-toggle');
+    if (boton) boton.style.borderLeft = '';
+    const titulo = document.getElementById('radar-toggle-title');
+    const status = document.getElementById('radar-toggle-status');
+    if (titulo) titulo.textContent = '🌧️ Activar radar de precipitación';
+    if (status) status.textContent = 'Toca para ver la lluvia en el mapa';
+}
+
 function initLocalWeather() {
     // 1. Pintar un esqueleto mientras llega la ubicación
     const cont = document.getElementById('panel-pronostico');
