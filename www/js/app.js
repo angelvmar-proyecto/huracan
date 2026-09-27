@@ -21,6 +21,67 @@ const NHC_LAYERS = {
     aviso: [9, 35, 61, 87, 113, 139, 165, 191, 217, 243, 269, 295, 321, 347, 373]
 };
 
+// Fuente viva: NHC directo vía el proxy Cloudflare del usuario
+const NHC_LIVE_URL  = 'https://www.nhc.noaa.gov/CurrentStorms.json';
+const PROXY_URL     = 'https://proxy-huracan.angelvmar.workers.dev/?url=';
+const JSON_URL_REMOTO = 'https://raw.githubusercontent.com/angelvmar-proyecto/huracan/main/www/clima_activo.json';
+const JSON_URL_LOCAL  = './clima_activo.json';
+
+// Convertir el formato del NHC (activeStorms + latitudeNumeric) al formato interno (tormentas + lat)
+function normalizarFeedNHC(raw) {
+    if (!raw || !Array.isArray(raw.activeStorms)) return null;
+    const tormentas = [];
+    let ultimaActualizacion = null;
+
+    raw.activeStorms.forEach(s => {
+        const lat = (s.latitudeNumeric != null) ? s.latitudeNumeric
+                  : (typeof s.latitude === 'string' ? parseFloat(s.latitude) * (s.latitude.toUpperCase().endsWith('S') ? -1 : 1) : null);
+        const lon = (s.longitudeNumeric != null) ? s.longitudeNumeric
+                  : (typeof s.longitude === 'string' ? parseFloat(s.longitude) * (s.longitude.toUpperCase().endsWith('W') ? -1 : 1) : null);
+
+        if (lat == null || lon == null || isNaN(lat) || isNaN(lon)) return;
+
+        tormentas.push({
+            id: s.id,
+            name: s.name || 'Sin nombre',
+            classification: s.classification || 'N/D',
+            intensity: s.intensity != null ? String(s.intensity) : null,
+            pressure: s.pressure != null ? String(s.pressure) : null,
+            movementDir: s.movementDir != null ? s.movementDir : null,
+            movementSpeed: s.movementSpeed != null ? s.movementSpeed : null,
+            lat: lat,
+            lon: lon,
+            lastUpdate: s.lastUpdate || null
+        });
+
+        if (s.lastUpdate && (!ultimaActualizacion || s.lastUpdate > ultimaActualizacion)) {
+            ultimaActualizacion = s.lastUpdate;
+        }
+    });
+
+    return {
+        actualizado: ultimaActualizacion || new Date().toISOString(),
+        fuente: 'NHC/NOAA (directo)',
+        hayCiclones: tormentas.length > 0,
+        tormentas: tormentas
+    };
+}
+
+// Intento individual con timeout
+async function fetchConTimeout(url, ms = 8000) {
+    const ctrl = new AbortController();
+    const t = setTimeout(() => ctrl.abort(), ms);
+    try {
+        const r = await fetch(url, { cache: 'no-store', signal: ctrl.signal });
+        clearTimeout(t);
+        if (!r.ok) throw new Error('HTTP ' + r.status);
+        return await r.json();
+    } catch (e) {
+        clearTimeout(t);
+        throw e;
+    }
+}
+
 // OpenWeatherMap — key existente reutilizada
 const OWM_KEY = 'eef21ac46e722ea8c4e66d51fd013e9f';
 const UBICACION_FALLBACK = { lat: 21.1619, lon: -86.8515, nombre: 'Cancún' };
@@ -51,30 +112,72 @@ function initMap() {
 }
 
 async function cargarDatosDinamicos() {
+    let data = null;
+    let origen = 'desconocido';
+
+    // Intento 1: NHC directo vía Cloudflare Worker (más fresco)
     try {
-        const r = await fetch('./clima_activo.json', { cache: 'no-store' });
-        if (!r.ok) throw new Error('HTTP ' + r.status);
-        const data = await r.json();
-        appState.ultimoFeed = data;
-
-        renderizarInfoCard(data);
-        renderizarAlertasDinamicas(data.tormentas || []);
-
-        if (data.hayCiclones && data.tormentas && data.tormentas.length > 0) {
-            renderizarCiclones(data.tormentas);
-        } else {
-            limpiarMapa();
-            mostrarAvisoInfo(
-                "🛰️ Sin ciclones activos",
-                data.actualizado
-                    ? "El NHC no reporta sistemas tropicales activos en este momento."
-                    : "Esperando la primera sincronización automática con el NHC."
-            );
+        const url = PROXY_URL + encodeURIComponent(NHC_LIVE_URL);
+        const raw = await fetchConTimeout(url, 8000);
+        const normalizado = normalizarFeedNHC(raw);
+        if (normalizado) {
+            data = normalizado;
+            origen = 'NHC en vivo';
         }
     } catch (e) {
-        console.error("Error al sincronizar datos:", e);
+        console.warn('NHC directo falló:', e.message);
+    }
+
+    // Intento 2: JSON intermedio en GitHub (respaldo)
+    if (!data) {
+        try {
+            const j = await fetchConTimeout(JSON_URL_REMOTO, 6000);
+            if (j && typeof j === 'object') {
+                data = j;
+                origen = 'GitHub (respaldo)';
+            }
+        } catch (e) {
+            console.warn('JSON GitHub falló:', e.message);
+        }
+    }
+
+    // Intento 3: JSON empaquetado en el APK (último recurso)
+    if (!data) {
+        try {
+            const j = await fetchConTimeout(JSON_URL_LOCAL, 4000);
+            if (j && typeof j === 'object') {
+                data = j;
+                origen = 'empaquetado local';
+            }
+        } catch (e) {
+            console.warn('JSON local falló:', e.message);
+        }
+    }
+
+    // Todo falló
+    if (!data) {
         limpiarMapa();
-        mostrarAvisoInfo("⚠️ Sin conexión de datos", "No se pudo leer el archivo de ciclones. Reintentando en el próximo ciclo.");
+        mostrarAvisoInfo(
+            "\u26a0\ufe0f Sin conexión",
+            "No se pudo leer el feed del NHC. Revisa tu conexión a internet."
+        );
+        return;
+    }
+
+    appState.ultimoFeed = data;
+    appState.origenDatos = origen;
+
+    renderizarInfoCard(data);
+    renderizarAlertasDinamicas(data.tormentas || []);
+
+    if (data.hayCiclones && data.tormentas && data.tormentas.length > 0) {
+        renderizarCiclones(data.tormentas);
+    } else {
+        limpiarMapa();
+        mostrarAvisoInfo(
+            "\U0001f6f0\ufe0f Sin ciclones activos",
+            "El NHC no reporta sistemas tropicales activos en este momento."
+        );
     }
 }
 
