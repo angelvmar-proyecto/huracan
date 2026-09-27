@@ -98,27 +98,26 @@
             <hr style="border:0; border-top:1px solid rgba(255,255,255,0.15); margin:16px 0;">
             <p class="sub-texto" style="margin-bottom:12px;">Boletines oficiales:</p>
 
-            <a href="https://smn.conagua.gob.mx/es/" target="_blank" rel="noopener"
-               class="alert-card warning" style="display:block; text-decoration:none; color:inherit;">
+            <div class="alert-card warning" onclick="abrirBoletinOficial('smn')" style="cursor:pointer;">
                 <div style="font-weight:bold; color:#f59e0b;">🟡 Ciclones Tropicales (SMN) ↗</div>
                 <div class="sub-texto" style="margin-top:4px;">
                     Servicio Meteorológico Nacional.
                 </div>
-            </a>
-            <a href="https://www.gob.mx/semar" target="_blank" rel="noopener"
-               class="alert-card info" style="display:block; text-decoration:none; color:inherit; margin-top:12px;">
+            </div>
+            <div class="alert-card info" onclick="abrirBoletinOficial('puertos')"
+                 style="cursor:pointer; margin-top:12px;">
                 <div style="font-weight:bold; color:#f59e0b;">⚓ Avisos a Puertos (SEMAR) ↗</div>
                 <div class="sub-texto" style="margin-top:4px;">
                     Secretaría de Marina.
                 </div>
-            </a>
-            <a href="https://smn.conagua.gob.mx/es/" target="_blank" rel="noopener"
-               class="alert-card info" style="display:block; text-decoration:none; color:inherit; margin-top:12px; border-left:4px solid #3b82f6;">
+            </div>
+            <div class="alert-card info" onclick="abrirBoletinOficial('aviso_general')"
+                 style="cursor:pointer; margin-top:12px; border-left:4px solid #3b82f6;">
                 <div style="font-weight:bold; color:#3b82f6;">🔵 Pronóstico General (CONAGUA) ↗</div>
                 <div class="sub-texto" style="margin-top:4px;">
                     Reporte nacional del clima.
                 </div>
-            </a>
+            </div>
         </div>
     </div>
 
