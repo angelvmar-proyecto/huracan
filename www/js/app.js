@@ -1,263 +1,116 @@
-let appState = {
-    currentTab: 'trayectoria',
-    map: null,
-    markers: [],
-    lines: [],
-    activeRadarLayer: null,
-    legendControl: null
+const CONFIG = {
+    PROXY: 'https://proxy-huracan.angelvmar.workers.dev/?url=',
+    ENDPOINT: 'https://www.nhc.noaa.gov/CurrentStorms.json'
 };
 
-document.addEventListener("DOMContentLoaded", () => {
-    initMap();
-    initLocalWeather();
-});
+let mapa, marcadoresTormentas = [];
+let userLat = 21.1619, userLon = -86.8515; // Cancún / Base
 
-function initMap() {
-    appState.map = L.map('map', {
-        zoomControl: false
-    }).setView([20.0, -98.0], 4);
+function iniciarMapa() {
+    mapa = L.map('map', {
+        center: [userLat, userLon],
+        zoom: 7,
+        zoomControl: false,
+        attributionControl: false
+    });
 
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        maxZoom: 18,
-        attribution: '&copy; OpenStreetMap contributors'
-    }).addTo(appState.map);
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+        subdomains: 'abcd',
+        maxZoom: 19
+    }).addTo(mapa);
 
-    L.control.zoom({ position: 'topright' }).addTo(appState.map);
+    L.circleMarker([userLat, userLon], {
+        radius: 8,
+        color: '#d4a843',
+        weight: 3,
+        fillColor: '#d4a843',
+        fillOpacity: 0.4
+    }).addTo(mapa).bindPopup('📍 Cancún / Base');
 
-    consultarFeedEnVivo();
+    cargarTormentas();
 }
 
-// -------------------------------------------------------------
-// CONSULTA AUTOMÁTICA EN TIEMPO REAL (SIN INTERVENCIÓN MANUAL)
-// -------------------------------------------------------------
-async function consultarFeedEnVivo() {
+async function cargarTormentas() {
+    const container = document.getElementById('tormentas-activas');
+    const estadoBadge = document.getElementById('estado');
+    container.innerHTML = '<div class="loading">⏳ Sincronizando datos...</div>';
+    estadoBadge.textContent = '🟡 CONSULTANDO';
+
     try {
-        mostrarAvisoCargando("Sincronizando con estaciones meteorológicas oficiales...");
-
-        // Usamos un proxy de grado de producción para evitar bloqueos CORS en Android/Capacitor
-        const urlOficial = 'https://www.nhc.noaa.gov/CurrentStorms.json';
-        const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(urlOficial)}`;
-
-        const response = await fetch(proxyUrl, { cache: 'no-store' });
-        if (!response.ok) throw new Error('Fallo la conexión con el servidor oficial');
-
-        const data = await response.json();
-
-        if (data && data.activeStorms && data.activeStorms.length > 0) {
-            renderizarCiclonesAutomaticos(data.activeStorms);
-        } else {
-            mostrarAvisoSinCiclones("No se registran ciclones tropicales activos en este momento en las cuencas monitoreadas.");
-        }
-    } catch (error) {
-        console.error("Error al obtener datos en vivo:", error);
-        mostrarAvisoSinCiclones("Modo de rastreo activo. Esperando reporte de nuevo sistema...");
-    }
-}
-
-function renderizarCiclonesAutomaticos(storms) {
-    // Limpiar elementos anteriores del mapa
-    appState.markers.forEach(m => appState.map.removeLayer(m));
-    appState.lines.forEach(l => appState.map.removeLayer(l));
-    appState.markers = [];
-    appState.lines = [];
-
-    storms.forEach(storm => {
-        const lat = parseFloat(storm.lat);
-        const lon = parseFloat(storm.lon);
-        const nombre = storm.name || storm.stormName || "Ciclón Activo";
-        const intensidad = storm.intensity || "Sistema Tropical";
-        const color = '#dc2626';
-
-        // Generar geometría de cono institucional proporcional basada en la posición real en vivo
-        const conoCoords = [
-            [lat, lon],
-            [lat + 1.2, lon - 2.8],
-            [lat + 2.8, lon - 6.2],
-            [lat + 3.4, lon - 7.0],
-            [lat + 1.8, lon - 3.2],
-            [lat - 0.3, lon - 0.5]
-        ];
-
-        const trayectoriaCoords = [
-            [lat, lon],
-            [lat + 1.5, lon - 3.0],
-            [lat + 3.0, lon - 6.5]
-        ];
-
-        // Dibujar cono de incertidumbre
-        const conoPoly = L.polygon(conoCoords, {
-            color: color,
-            weight: 1.5,
-            fillColor: color,
-            fillOpacity: 0.3,
-            dashArray: '5, 5'
-        }).addTo(appState.map);
-        appState.lines.push(conoPoly);
-
-        // Línea central de trayectoria
-        const lineaP = L.polyline(trayectoriaCoords, {
-            color: color,
-            weight: 4,
-            opacity: 0.95
-        }).addTo(appState.map);
-        appState.lines.push(lineaP);
-
-        // Marcador principal en el ojo de la tormenta en tiempo real
-        const principalIcon = L.divIcon({
-            className: 'custom-storm-marker',
-            html: `<div style="background: ${color}; color: white; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 15px; font-weight: bold; box-shadow: 0 0 15px ${color}; border: 2.5px solid #fff;">🌀</div>`,
-            iconSize: [40, 40],
-            iconAnchor: [20, 20]
-        });
-
-        const mainMarker = L.marker([lat, lon], { icon: principalIcon })
-            .addTo(appState.map)
-            .bindPopup(`<b>🌀 ${nombre}</b><br><b>Intensidad:</b> ${intensidad}<br>📍 <b>Posición:</b> ${lat}, ${lon}<br>🕒 <i>Actualizado Automáticamente en Vivo</i>`);
+        const urlFinal = CONFIG.PROXY + encodeURIComponent(CONFIG.ENDPOINT);
+        const respuesta = await fetch(urlFinal);
         
-        appState.markers.push(mainMarker);
-        mainMarker.openPopup();
-    });
+        if (!respuesta.ok) throw new Error(`HTTP error! status: ${respuesta.status}`);
+        
+        const data = await respuesta.json();
+        procesarYMostrarTormentas(data);
+        estadoBadge.textContent = '🟢 CONECTADO';
+    } catch (error) {
+        console.error('Error al conectar con la API:', error);
+        container.innerHTML = `<div style="color:#ff6666;text-align:center;font-size:12px;">❌ Error de conexión con la API o Cloudflare.</div>`;
+        estadoBadge.textContent = '🔴 ERROR';
+    }
 }
 
-function mostrarAvisoCargando(mensaje) {
-    appState.markers.forEach(m => appState.map.removeLayer(m));
-    appState.lines.forEach(l => appState.map.removeLayer(l));
-    appState.markers = [];
-    appState.lines = [];
+function procesarYMostrarTormentas(data) {
+    const container = document.getElementById('tormentas-activas');
+    const features = data.features || data.activeStorms || [];
 
-    const markerInfo = L.marker([23.6345, -102.5528], {
-        icon: L.divIcon({
-            className: 'info-marker',
-            html: `<div style="background: rgba(15, 23, 42, 0.95); color: white; padding: 12px 18px; border-radius: 8px; border: 1px solid #f59e0b; font-size: 13px; text-align: center; box-shadow: 0 4px 10px rgba(0,0,0,0.5);"><b>🔄 Conexión en Vivo</b><br>${mensaje}</div>`,
-            iconSize: [240, 70],
-            iconAnchor: [120, 35]
-        })
-    }).addTo(appState.map);
-    appState.markers.push(markerInfo);
-}
+    marcadoresTormentas.forEach(m => mapa.removeLayer(m));
+    marcadoresTormentas = [];
 
-function mostrarAvisoSinCiclones(mensaje) {
-    appState.markers.forEach(m => appState.map.removeLayer(m));
-    appState.lines.forEach(l => appState.map.removeLayer(l));
-    appState.markers = [];
-    appState.lines = [];
-
-    const markerInfo = L.marker([23.6345, -102.5528], {
-        icon: L.divIcon({
-            className: 'info-marker',
-            html: `<div style="background: rgba(15, 23, 42, 0.95); color: white; padding: 12px 18px; border-radius: 8px; border: 1px solid #10b981; font-size: 13px; text-align: center; box-shadow: 0 4px 10px rgba(0,0,0,0.5);"><b>🛰️ Sistema de Rastreo Automático</b><br>${mensaje}</div>`,
-            iconSize: [240, 70],
-            iconAnchor: [120, 35]
-        })
-    }).addTo(appState.map);
-    appState.markers.push(markerInfo);
-}
-
-// =====================================================
-//  CAPAS VISUALES Y CLIMA LOCAL
-// =====================================================
-function aplicarCapaRadar(tipo) {
-    if (appState.activeRadarLayer) {
-        appState.map.removeLayer(appState.activeRadarLayer);
-        appState.activeRadarLayer = null;
-    }
-    if (appState.legendControl) {
-        appState.map.removeControl(appState.legendControl);
-        appState.legendControl = null;
+    if (features.length === 0) {
+        container.innerHTML = `<div style="text-align:center;color:#00cc44;font-size:13px;padding:8px;">✅ No hay tormentas activas en este momento.</div>`;
+        return;
     }
 
-    let tituloLeyenda = "";
-    let htmlLeyenda = "";
-    const groupLayers = [];
+    let html = '';
 
-    if (tipo === 'infrarrojo') {
-        tituloLeyenda = "🛰️ Nubes y Masas Nubosas";
-        htmlLeyenda = '<div style="font-size:11px; line-height:1.4;"><b>☁️ Estado:</b> Cobertura satelital en tiempo real.</div>';
-        groupLayers.push(L.marker([18.5, -95.0], {
-            icon: L.divIcon({ className: 'weather-emoji', html: '<div style="font-size: 26px;">☁️⛈️</div>', iconSize: [30, 30], iconAnchor: [15, 15] })
-        }));
-    } else if (tipo === 'vientos') {
-        tituloLeyenda = "💨 Vectores de Viento";
-        htmlLeyenda = '<div style="font-size:11px; line-height:1.4;"><b>💨 Estado:</b> Flujo general y corrientes de arrastre.</div>';
-        groupLayers.push(L.marker([18.5, -95.0], {
-            icon: L.divIcon({ className: 'weather-emoji', html: '<div style="font-size: 26px;">💨</div>', iconSize: [30, 30], iconAnchor: [15, 15] })
-        }));
-    } else if (tipo === 'precipitacion') {
-        tituloLeyenda = "🌧️ Zonas de Precipitación";
-        htmlLeyenda = '<div style="font-size:11px; line-height:1.4;"><b>🌧️ Estado:</b> Radares pluviales enlazados.</div>';
-        groupLayers.push(L.marker([18.5, -95.0], {
-            icon: L.divIcon({ className: 'weather-emoji', html: '<div style="font-size: 26px;">🌧️⚡</div>', iconSize: [30, 30], iconAnchor: [15, 15] })
-        }));
-    }
+    features.forEach(f => {
+        const p = f.properties || f;
+        const coords = f.geometry?.coordinates || [p.lon || 0, p.lat || 0];
+        
+        const nombre = p.NAME || p.name || 'Sistema sin nombre';
+        const categoria = p.CATEGORY || p.category || p.cat || 'Desconocida';
+        const viento = p.WIND || p.windSpeed || p.wind || 'N/A';
+        const presion = p.PRESSURE || p.pressure || 'N/A';
+        
+        const lat = coords[1] || userLat;
+        const lon = coords[0] || userLon;
 
-    appState.activeRadarLayer = L.layerGroup(groupLayers).addTo(appState.map);
+        let icono = '🌀';
+        let claseCat = 'cat-huracan';
+        const catLower = String(categoria).toLowerCase();
 
-    const LegendControl = L.Control.extend({
-        options: { position: 'topleft' },
-        onAdd: function (map) {
-            const div = L.DomUtil.create('div', 'info-legend');
-            div.style.background = 'rgba(15, 23, 42, 0.95)';
-            div.style.color = '#fff';
-            div.style.padding = '10px 14px';
-            div.style.borderRadius = '8px';
-            div.style.boxShadow = '0 4px 6px rgba(0,0,0,0.4)';
-            div.style.border = '1px solid rgba(255,255,255,0.15)';
-            div.innerHTML = `<div style="display:flex; justify-content:space-between; align-items:center;"><b style="color: #f59e0b; font-size:12px;">${tituloLeyenda}</b><button onclick="this.parentElement.parentElement.remove()" style="background:none; border:none; color:#aaa; font-size:14px; cursor:pointer; margin-left:8px;">&times;</button></div><hr style="border:0; border-top:1px solid rgba(255,255,255,0.2); margin:4px 0;">${htmlLeyenda}`;
-            return div;
+        if (catLower.includes('tropical storm') || catLower.includes('tormenta')) {
+            icono = '🌪️';
+            claseCat = 'cat-tormenta';
+        } else if (catLower.includes('depression') || catLower.includes('depresion')) {
+            icono = '🌧️';
+            claseCat = 'cat-depresion';
         }
-    });
 
-    appState.legendControl = new LegendControl();
-    appState.map.addControl(appState.legendControl);
-
-    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-    document.querySelectorAll('.weather-panel').forEach(p => p.classList.remove('active'));
-    
-    document.querySelector('.weather-tabs button:first-child').classList.add('active');
-    document.getElementById('panel-trayectoria').classList.add('active');
-    appState.currentTab = 'trayectoria';
-
-    setTimeout(() => appState.map.invalidateSize(), 150);
-}
-
-function initLocalWeather() {
-    const localContainer = document.getElementById('panel-pronostico');
-    if (localContainer) {
-        localContainer.innerHTML = `
-            <div class="panel-content-inner">
-                <h2 class="titulo-panel" style="font-size: 18px; margin-bottom: 4px;">📍 Automatización en Vivo</h2>
-                <p class="sub-texto" style="margin-bottom: 12px; color: #10b981; font-weight: 500;">✓ Sin intervención manual requerida</p>
-                <div class="card-option" style="background: rgba(16, 185, 129, 0.15); border: 1px solid rgba(16, 185, 129, 0.4); margin-bottom: 8px;">
-                    <div style="display: flex; justify-content: space-between; font-weight: bold; color: #10b981;">
-                        <span>🌐 Motor de Sincronización</span>
-                        <span>Activo 24/7</span>
-                    </div>
-                    <div class="sub-texto" style="margin-top: 4px;">La aplicación consulta automáticamente los feeds oficiales y dibuja cualquier nuevo huracán o perturbación futura por sí sola.</div>
+        html += `
+            <div class="tormenta-card">
+                <div class="icono">${icono}</div>
+                <div class="info">
+                    <div class="nombre">${nombre}</div>
+                    <span class="categoria ${claseCat}">Cat: ${categoria}</span>
+                    <div style="font-size:11px;color:#8a7a5a;margin-top:2px;">💨 Viento: ${viento} nudos · 🔽 ${presion} hPa</div>
                 </div>
             </div>
         `;
-    }
+
+        if (lat !== 0 && lon !== 0) {
+            const marker = L.marker([lat, lon]).addTo(mapa)
+                .bindPopup(`<b>${nombre}</b><br>Categoría: ${categoria}<br>Viento: ${viento} nudos`);
+            marcadoresTormentas.push(marker);
+        }
+    });
+
+    container.innerHTML = html;
 }
 
-function abrirBoletinOficial(tipo) {
-    let urlOficial = "https://smn.conagua.gob.mx/es/ciclones-tropicales/cuenca-del-pacifico";
-    if (tipo === 'puertos') {
-        urlOficial = "https://www.gob.mx/semar";
-    } else if (tipo === 'aviso_general') {
-        urlOficial = "https://smn.conagua.gob.mx/es/";
-    }
-    window.open(urlOficial, '_blank');
-}
-
-function switchTab(tabId, evt) {
-    document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-    document.querySelectorAll('.weather-panel').forEach(panel => panel.classList.remove('active'));
-
-    evt.currentTarget.classList.add('active');
-    document.getElementById(`panel-${tabId}`).classList.add('active');
-    appState.currentTab = tabId;
-
-    if(tabId === 'trayectoria' && appState.map) {
-        setTimeout(() => appState.map.invalidateSize(), 150);
-    }
-}
+window.onload = function() {
+    iniciarMapa();
+};

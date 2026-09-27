@@ -1,107 +1,119 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>🌊 Huracanes MX Pro</title>
-    <!-- Leaflet CSS -->
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+    <title>🌊 MAR Caribe Huracanes</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-    <!-- Estilos Pro Custom -->
-    <link rel="stylesheet" href="css/style.css">
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html, body { 
+            width: 100%; height: 100%; overflow: hidden;
+            font-family: -apple-system, sans-serif; 
+            background: #0a0804; color: #f5e6c8; 
+            position: fixed; top: 0; left: 0;
+        }
+        #header {
+            background: linear-gradient(135deg, #d4a843, #b8860b, #8b6914);
+            padding: 8px 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: fixed; top: 0; left: 0; right: 0;
+            z-index: 1000; height: 48px;
+            box-shadow: 0 2px 20px rgba(184, 134, 11, 0.4);
+        }
+        #header h1 { 
+            font-size: 17px; font-weight: 800; color: #fff8e7;
+            text-shadow: 0 1px 8px rgba(0,0,0,0.3);
+        }
+        #header .badge {
+            background: rgba(255, 248, 231, 0.2);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 700;
+            color: #fff8e7;
+            border: 1px solid rgba(255, 248, 231, 0.15);
+        }
+        #map {
+            position: fixed;
+            top: 48px; left: 0; right: 0; bottom: 0;
+            width: 100%;
+            background: #0a0804;
+            z-index: 1;
+        }
+        #info {
+            position: fixed;
+            bottom: 10px; left: 10px; right: 10px;
+            background: rgba(10, 8, 4, 0.92);
+            backdrop-filter: blur(15px);
+            padding: 10px 12px;
+            border-top: 3px solid #d4a843;
+            border-radius: 14px;
+            z-index: 1000;
+            max-height: 40vh;
+            overflow-y: auto;
+            box-shadow: 0 4px 40px rgba(0,0,0,0.9);
+        }
+        .tormenta-card {
+            background: rgba(212, 168, 67, 0.06);
+            border: 1px solid rgba(212, 168, 67, 0.15);
+            border-radius: 8px;
+            padding: 8px 10px;
+            margin: 4px 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .tormenta-card .icono { font-size: 28px; width: 40px; text-align: center; }
+        .tormenta-card .info { flex: 1; }
+        .tormenta-card .nombre { font-weight: 700; font-size: 14px; color: #f5e6c8; }
+        .tormenta-card .categoria {
+            font-size: 11px; font-weight: 600;
+            padding: 2px 8px; border-radius: 10px;
+            display: inline-block; margin-top: 2px;
+        }
+        .cat-huracan { background: rgba(255,150,0,0.2); color: #ff9600; }
+        .cat-tormenta { background: rgba(255,200,0,0.2); color: #f5d742; }
+        .cat-depresion { background: rgba(0,200,255,0.2); color: #00ccff; }
+        .loading { text-align: center; color: #8a7a5a; font-size: 13px; padding: 10px; }
+        #refresh-btn {
+            position: fixed;
+            bottom: 120px;
+            right: 16px;
+            background: linear-gradient(135deg, #d4a843, #b8860b);
+            border: none;
+            color: white;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            font-size: 18px;
+            box-shadow: 0 4px 25px rgba(184, 134, 11, 0.5);
+            z-index: 2000;
+            cursor: pointer;
+        }
+    </style>
 </head>
 <body>
 
-    <!-- BARRA DE PESTAÑAS SUPERIOR -->
-    <nav class="weather-tabs">
-        <button class="tab-btn active" onclick="switchTab('trayectoria', event)">🌀 Trayectoria</button>
-        <button class="tab-btn" onclick="switchTab('radar', event)">📡 Radar</button>
-        <button class="tab-btn" onclick="switchTab('alertas', event)">🚨 Alertas</button>
-        <button class="tab-btn" onclick="switchTab('pronostico', event)">⛅ Clima Local</button>
-        <button class="tab-btn" onclick="switchTab('seguridad', event)">🛡️ Seguridad</button>
-    </nav>
+<div id="header">
+    <h1>🌊 MAR Caribe Huracanes</h1>
+    <span class="badge" id="estado">🟢 CONECTANDO...</span>
+</div>
 
-    <!-- PANEL 1: TRAYECTORIA Y MAPA CON CONOS -->
-    <div id="panel-trayectoria" class="weather-panel active">
-        <div id="map"></div>
-        <div class="info-card-floating">
-            <div class="titulo-panel" style="color: #ef4444;">🌀 Huracán Polo (Cat. 4/5) con Cono de Incertidumbre</div>
-            <div class="sub-texto" style="color: #fff; margin-top: 2px;">Monitoreo oficial y modelos de trayectoria</div>
-        </div>
+<div id="map"></div>
+
+<button id="refresh-btn" onclick="cargarTormentas()">↻</button>
+
+<div id="info">
+    <div style="font-weight:700;font-size:13px;color:#d4a843;margin-bottom:6px;">🌀 Sistemas Activos (NOAA)</div>
+    <div id="tormentas-activas">
+        <div class="loading">⏳ Consultando API y Cloudflare...</div>
     </div>
+</div>
 
-    <!-- PANEL 2: RADAR -->
-    <div id="panel-radar" class="weather-panel">
-        <div class="panel-content-inner">
-            <h2 class="titulo-panel" style="font-size: 18px; margin-bottom: 12px;">📡 Capas Visuales de Clima</h2>
-            <p class="sub-texto" style="margin-bottom: 16px;">Selecciona una capa para ver los iconos ilustrativos en el mapa.</p>
-            
-            <div class="card-option" onclick="aplicarCapaRadar('infrarrojo')">
-                <div style="font-weight: 600; color: #f59e0b;">🛰️ Nubes y Masas Nubosas (☁️)</div>
-                <div class="sub-texto">Ubicación de humedad y tormentas con iconos claros</div>
-            </div>
-
-            <div class="card-option" style="margin-top: 12px;" onclick="aplicarCapaRadar('vientos')">
-                <div style="font-weight: 600; color: #f59e0b;">💨 Vectores e Intensidad de Viento (💨)</div>
-                <div class="sub-texto">Líneas de flujo y símbolos de viento</div>
-            </div>
-
-            <div class="card-option" style="margin-top: 12px;" onclick="aplicarCapaRadar('precipitacion')">
-                <div style="font-weight: 600; color: #f59e0b;">🌧️ Zonas de Lluvia y Tormenta (🌧️)</div>
-                <div class="sub-texto">Indicadores gráficos de aguaceros</div>
-            </div>
-        </div>
-    </div>
-
-    <!-- PANEL 3: ALERTAS Y AVISOS OFICIALES (ENLACES REALES SMN/CONAGUA/SEMAR) -->
-    <div id="panel-alertas" class="weather-panel">
-        <div class="panel-content-inner">
-            <h2 class="titulo-panel" style="font-size: 18px; margin-bottom: 6px;">🚨 Avisos Oficiales (CONAGUA / SMN)</h2>
-            <p class="sub-texto" style="margin-bottom: 14px;">Haz clic en cualquier aviso para abrir directamente el boletín oficial institucional.</p>
-
-            <div class="alert-card warning" onclick="abrirBoletinOficial('smn')" style="cursor: pointer;">
-                <div style="font-weight: bold; color: #ef4444;">🔴 Alerta Ciclónica - Huracán Polo (Pacífico) ↗</div>
-                <div class="sub-texto" style="margin-top: 4px;"><b>Autoridad:</b> Servicio Meteorológico Nacional (SMN). Toca para abrir el aviso oficial de ciclones tropicales.</div>
-            </div>
-
-            <div class="alert-card info" onclick="abrirBoletinOficial('puertos')" style="cursor: pointer; margin-top: 12px;">
-                <div style="font-weight: bold; color: #f59e0b;">⚓ Avisos a la Navegación y Puertos ↗</div>
-                <div class="sub-texto" style="margin-top: 4px;"><b>Autoridad:</b> Secretaría de Marina (SEMAR). Toca para consultar comunicados de capitanía de puerto.</div>
-            </div>
-
-            <div class="alert-card info" onclick="abrirBoletinOficial('aviso_general')" style="cursor: pointer; margin-top: 12px; border-left: 4px solid #3b82f6;">
-                <div style="font-weight: bold; color: #3b82f6;">🔵 Pronóstico General y Vigilancia ↗</div>
-                <div class="sub-texto" style="margin-top: 4px;"><b>Autoridad:</b> CONAGUA. Toca para ver el reporte general del clima en el territorio nacional.</div>
-            </div>
-        </div>
-    </div>
-
-    <!-- PANEL 4: PRONÓSTICO / CLIMA LOCAL -->
-    <div id="panel-pronostico" class="weather-panel">
-        <!-- Contenido generado dinámicamente en app.js -->
-    </div>
-
-    <!-- PANEL 5: SEGURIDAD Y REPORTE -->
-    <div id="panel-seguridad" class="weather-panel">
-        <div class="panel-content-inner">
-            <h2 class="titulo-panel" style="font-size: 18px; margin-bottom: 12px;">🛡️ Protocolos y Emergencia</h2>
-            <p class="sub-texto" style="margin-bottom: 16px;">Herramientas de protección civil y estatus.</p>
-
-            <button class="action-btn red" onclick="alert('Llamando al 911 de Emergencias...')">
-                📞 Llamar al 911 (Emergencias)
-            </button>
-
-            <button class="action-btn blue" style="margin-top: 12px;" onclick="alert('Localizando refugios temporales habilitados por Protección Civil...')">
-                🏫 Ver Refugios Temporales Cercanos
-            </button>
-
-            <button class="action-btn" style="margin-top: 12px; background: #10b981; color: white;" onclick="alert('¡Estatus enviado con éxito! Tu reporte de que te encuentras bien ha sido registrado localmente.')">
-                ✅ Registrar "Estoy Bien" (Reporte Ciudadano)
-            </button>
-        </div>
-    </div>
-
-    <!-- Leaflet JS -->
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-    <script src="js/app.js"></script>
+<script src="js/app.js"></script>
 </body>
 </html>
