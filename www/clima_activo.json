@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-09-28T16:34:34Z",
+  "actualizado": "2026-09-28T22:26:59Z",
   "fuente": "NHC/NOAA CurrentStorms.json",
   "hayCiclones": true,
   "tormentas": [
@@ -9,11 +9,11 @@
       "classification": "TD",
       "intensity": "30",
       "pressure": "1011",
-      "movementDir": 210,
+      "movementDir": 220,
       "movementSpeed": 9,
-      "lat": 27.1,
-      "lon": -44.6,
-      "lastUpdate": "2026-09-28T15:00:00.000Z"
+      "lat": 26.6,
+      "lon": -45.3,
+      "lastUpdate": "2026-09-28T21:00:00.000Z"
     },
     {
       "id": "al082026",
@@ -21,23 +21,23 @@
       "classification": "TS",
       "intensity": "40",
       "pressure": "1006",
-      "movementDir": 100,
+      "movementDir": 115,
       "movementSpeed": 17,
-      "lat": 36.6,
-      "lon": -50.4,
-      "lastUpdate": "2026-09-28T15:00:00.000Z"
+      "lat": 36.5,
+      "lon": -48.7,
+      "lastUpdate": "2026-09-28T21:00:00.000Z"
     },
     {
       "id": "ep172026",
       "name": "Polo",
       "classification": "HU",
       "intensity": "100",
-      "pressure": "958",
-      "movementDir": 35,
-      "movementSpeed": 10,
-      "lat": 24.2,
-      "lon": -113.5,
-      "lastUpdate": "2026-09-28T15:00:00.000Z"
+      "pressure": "963",
+      "movementDir": 40,
+      "movementSpeed": 12,
+      "lat": 25,
+      "lon": -113,
+      "lastUpdate": "2026-09-28T21:00:00.000Z"
     },
     {
       "id": "ep182026",
@@ -46,22 +46,22 @@
       "intensity": "45",
       "pressure": "999",
       "movementDir": 300,
-      "movementSpeed": 8,
-      "lat": 13.8,
-      "lon": -101.2,
-      "lastUpdate": "2026-09-28T15:00:00.000Z"
+      "movementSpeed": 10,
+      "lat": 14.2,
+      "lon": -102.1,
+      "lastUpdate": "2026-09-28T21:00:00.000Z"
     },
     {
       "id": "ep152026",
       "name": "Nolo",
       "classification": "HU",
-      "intensity": "135",
-      "pressure": "929",
-      "movementDir": 290,
-      "movementSpeed": 13,
-      "lat": 17.1,
-      "lon": -162.3,
-      "lastUpdate": "2026-09-28T15:00:00.000Z"
+      "intensity": "125",
+      "pressure": "933",
+      "movementDir": 300,
+      "movementSpeed": 12,
+      "lat": 17.7,
+      "lon": -163.1,
+      "lastUpdate": "2026-09-28T21:00:00.000Z"
     }
   ]
 }
