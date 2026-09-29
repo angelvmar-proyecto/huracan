@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-09-29T15:30:44Z",
+  "actualizado": "2026-09-29T20:31:11Z",
   "fuente": "NHC/NOAA CurrentStorms.json",
   "hayCiclones": true,
   "tormentas": [
@@ -32,12 +32,12 @@
       "name": "Polo",
       "classification": "HU",
       "intensity": "65",
-      "pressure": "981",
+      "pressure": "984",
       "movementDir": 40,
       "movementSpeed": 17,
-      "lat": 27.8,
-      "lon": -110.9,
-      "lastUpdate": "2026-09-29T15:00:00.000Z"
+      "lat": 28,
+      "lon": -110.6,
+      "lastUpdate": "2026-09-29T18:00:00.000Z"
     },
     {
       "id": "ep182026",
@@ -45,11 +45,11 @@
       "classification": "TS",
       "intensity": "55",
       "pressure": "987",
-      "movementDir": 300,
-      "movementSpeed": 13,
-      "lat": 15.3,
-      "lon": -105,
-      "lastUpdate": "2026-09-29T15:00:00.000Z"
+      "movementDir": 305,
+      "movementSpeed": 12,
+      "lat": 15.7,
+      "lon": -105.1,
+      "lastUpdate": "2026-09-29T18:00:00.000Z"
     },
     {
       "id": "ep192026",
@@ -67,13 +67,13 @@
       "id": "ep152026",
       "name": "Nolo",
       "classification": "HU",
-      "intensity": "95",
-      "pressure": "964",
+      "intensity": "90",
+      "pressure": "968",
       "movementDir": 355,
       "movementSpeed": 9,
-      "lat": 20.5,
+      "lat": 20.9,
       "lon": -164.2,
-      "lastUpdate": "2026-09-29T15:00:00.000Z"
+      "lastUpdate": "2026-09-29T18:00:00.000Z"
     }
   ]
 }
