@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-09-30T05:50:22Z",
+  "actualizado": "2026-09-30T12:08:46Z",
   "fuente": "NHC/NOAA CurrentStorms.json",
   "hayCiclones": true,
   "tormentas": [
@@ -8,12 +8,12 @@
       "name": "Hanna",
       "classification": "TS",
       "intensity": "35",
-      "pressure": "1005",
-      "movementDir": 130,
-      "movementSpeed": 12,
-      "lat": 33.7,
-      "lon": -43.6,
-      "lastUpdate": "2026-09-30T03:00:00.000Z"
+      "pressure": "1006",
+      "movementDir": 120,
+      "movementSpeed": 5,
+      "lat": 33.5,
+      "lon": -43.9,
+      "lastUpdate": "2026-09-30T09:00:00.000Z"
     },
     {
       "id": "ep172026",
@@ -30,14 +30,14 @@
     {
       "id": "ep182026",
       "name": "Rachel",
-      "classification": "TS",
-      "intensity": "60",
-      "pressure": "989",
-      "movementDir": 310,
-      "movementSpeed": 13,
-      "lat": 17,
-      "lon": -106.6,
-      "lastUpdate": "2026-09-30T03:00:00.000Z"
+      "classification": "HU",
+      "intensity": "75",
+      "pressure": "979",
+      "movementDir": 315,
+      "movementSpeed": 10,
+      "lat": 17.8,
+      "lon": -107.6,
+      "lastUpdate": "2026-09-30T12:00:00.000Z"
     },
     {
       "id": "ep192026",
@@ -45,23 +45,23 @@
       "classification": "TD",
       "intensity": "25",
       "pressure": "1006",
-      "movementDir": 105,
+      "movementDir": 110,
       "movementSpeed": 9,
-      "lat": 13.8,
-      "lon": -130.2,
-      "lastUpdate": "2026-09-30T03:00:00.000Z"
+      "lat": 13.6,
+      "lon": -129.4,
+      "lastUpdate": "2026-09-30T09:00:00.000Z"
     },
     {
       "id": "ep152026",
       "name": "Nolo",
-      "classification": "HU",
-      "intensity": "65",
-      "pressure": "983",
-      "movementDir": 360,
-      "movementSpeed": 3,
-      "lat": 22.4,
-      "lon": -164.2,
-      "lastUpdate": "2026-09-30T06:00:00.000Z"
+      "classification": "TS",
+      "intensity": "55",
+      "pressure": "991",
+      "movementDir": 265,
+      "movementSpeed": 6,
+      "lat": 22.2,
+      "lon": -164.8,
+      "lastUpdate": "2026-09-30T12:00:00.000Z"
     }
   ]
 }
