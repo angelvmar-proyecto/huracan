@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-09-30T18:04:37Z",
+  "actualizado": "2026-09-30T22:29:11Z",
   "fuente": "NHC/NOAA CurrentStorms.json",
   "hayCiclones": true,
   "tormentas": [
@@ -22,22 +22,22 @@
       "intensity": "75",
       "pressure": "978",
       "movementDir": 315,
-      "movementSpeed": 9,
-      "lat": 18.1,
+      "movementSpeed": 8,
+      "lat": 18.8,
       "lon": -108,
-      "lastUpdate": "2026-09-30T15:00:00.000Z"
+      "lastUpdate": "2026-09-30T21:00:00.000Z"
     },
     {
       "id": "ep192026",
       "name": "Nineteen-E",
       "classification": "TD",
-      "intensity": "30",
-      "pressure": "1002",
+      "intensity": "25",
+      "pressure": "1005",
       "movementDir": 80,
-      "movementSpeed": 10,
-      "lat": 14.3,
-      "lon": -128.4,
-      "lastUpdate": "2026-09-30T15:00:00.000Z"
+      "movementSpeed": 14,
+      "lat": 14.9,
+      "lon": -127,
+      "lastUpdate": "2026-09-30T21:00:00.000Z"
     },
     {
       "id": "ep152026",
@@ -45,11 +45,11 @@
       "classification": "TS",
       "intensity": "45",
       "pressure": "996",
-      "movementDir": 180,
-      "movementSpeed": 2,
-      "lat": 21.8,
-      "lon": -164.6,
-      "lastUpdate": "2026-09-30T18:00:00.000Z"
+      "movementDir": 170,
+      "movementSpeed": 3,
+      "lat": 21.6,
+      "lon": -164.7,
+      "lastUpdate": "2026-09-30T21:00:00.000Z"
     }
   ]
 }
