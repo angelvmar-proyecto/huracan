@@ -1,20 +1,8 @@
 {
-  "actualizado": "2026-09-30T22:29:11Z",
+  "actualizado": "2026-10-01T01:29:00Z",
   "fuente": "NHC/NOAA CurrentStorms.json",
   "hayCiclones": true,
   "tormentas": [
-    {
-      "id": "al082026",
-      "name": "Hanna",
-      "classification": "PTC",
-      "intensity": "30",
-      "pressure": "1008",
-      "movementDir": 90,
-      "movementSpeed": 5,
-      "lat": 33.4,
-      "lon": -43.6,
-      "lastUpdate": "2026-09-30T15:00:00.000Z"
-    },
     {
       "id": "ep182026",
       "name": "Rachel",
@@ -46,10 +34,10 @@
       "intensity": "45",
       "pressure": "996",
       "movementDir": 170,
-      "movementSpeed": 3,
-      "lat": 21.6,
-      "lon": -164.7,
-      "lastUpdate": "2026-09-30T21:00:00.000Z"
+      "movementSpeed": 2,
+      "lat": 21.5,
+      "lon": -164.8,
+      "lastUpdate": "2026-10-01T00:00:00.000Z"
     }
   ]
 }
