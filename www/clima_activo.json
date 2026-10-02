@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-10-02T18:36:48Z",
+  "actualizado": "2026-10-02T22:50:32Z",
   "fuente": "NHC/NOAA CurrentStorms.json",
   "hayCiclones": true,
   "tormentas": [
@@ -7,25 +7,25 @@
       "id": "ep182026",
       "name": "Rachel",
       "classification": "HU",
-      "intensity": "95",
-      "pressure": "959",
+      "intensity": "90",
+      "pressure": "963",
       "movementDir": 265,
-      "movementSpeed": 6,
+      "movementSpeed": 5,
       "lat": 19.3,
-      "lon": -110.8,
-      "lastUpdate": "2026-10-02T15:00:00.000Z"
+      "lon": -111.1,
+      "lastUpdate": "2026-10-02T21:00:00.000Z"
     },
     {
       "id": "ep152026",
       "name": "Nolo",
-      "classification": "TS",
-      "intensity": "60",
-      "pressure": "987",
-      "movementDir": 285,
+      "classification": "HU",
+      "intensity": "65",
+      "pressure": "984",
+      "movementDir": 280,
       "movementSpeed": 6,
       "lat": 23.3,
-      "lon": -167.4,
-      "lastUpdate": "2026-10-02T18:00:00.000Z"
+      "lon": -167.8,
+      "lastUpdate": "2026-10-02T21:00:00.000Z"
     }
   ]
 }
