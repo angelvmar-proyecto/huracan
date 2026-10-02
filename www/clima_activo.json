@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-10-02T00:04:41Z",
+  "actualizado": "2026-10-02T06:00:52Z",
   "fuente": "NHC/NOAA CurrentStorms.json",
   "hayCiclones": true,
   "tormentas": [
@@ -9,35 +9,23 @@
       "classification": "HU",
       "intensity": "105",
       "pressure": "950",
-      "movementDir": 280,
+      "movementDir": 290,
       "movementSpeed": 3,
-      "lat": 19.4,
-      "lon": -109.5,
-      "lastUpdate": "2026-10-01T21:00:00.000Z"
-    },
-    {
-      "id": "ep192026",
-      "name": "Nineteen-E",
-      "classification": "PTC",
-      "intensity": "25",
-      "pressure": "1006",
-      "movementDir": 90,
-      "movementSpeed": 8,
-      "lat": 15,
-      "lon": -123,
-      "lastUpdate": "2026-10-01T21:00:00.000Z"
+      "lat": 19.5,
+      "lon": -109.9,
+      "lastUpdate": "2026-10-02T03:00:00.000Z"
     },
     {
       "id": "ep152026",
       "name": "Nolo",
       "classification": "TS",
-      "intensity": "50",
-      "pressure": "993",
-      "movementDir": 320,
-      "movementSpeed": 12,
-      "lat": 22.8,
-      "lon": -165.9,
-      "lastUpdate": "2026-10-02T00:00:00.000Z"
+      "intensity": "55",
+      "pressure": "990",
+      "movementDir": 300,
+      "movementSpeed": 6,
+      "lat": 23.2,
+      "lon": -166.4,
+      "lastUpdate": "2026-10-02T06:00:00.000Z"
     }
   ]
 }
