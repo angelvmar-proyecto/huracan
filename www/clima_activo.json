@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-10-01T20:26:14Z",
+  "actualizado": "2026-10-02T00:04:41Z",
   "fuente": "NHC/NOAA CurrentStorms.json",
   "hayCiclones": true,
   "tormentas": [
@@ -7,25 +7,25 @@
       "id": "ep182026",
       "name": "Rachel",
       "classification": "HU",
-      "intensity": "90",
-      "pressure": "964",
-      "movementDir": 295,
-      "movementSpeed": 6,
-      "lat": 19.6,
-      "lon": -109.6,
-      "lastUpdate": "2026-10-01T15:00:00.000Z"
+      "intensity": "105",
+      "pressure": "950",
+      "movementDir": 280,
+      "movementSpeed": 3,
+      "lat": 19.4,
+      "lon": -109.5,
+      "lastUpdate": "2026-10-01T21:00:00.000Z"
     },
     {
       "id": "ep192026",
       "name": "Nineteen-E",
-      "classification": "TD",
+      "classification": "PTC",
       "intensity": "25",
       "pressure": "1006",
       "movementDir": 90,
-      "movementSpeed": 16,
-      "lat": 15.2,
-      "lon": -123.3,
-      "lastUpdate": "2026-10-01T15:00:00.000Z"
+      "movementSpeed": 8,
+      "lat": 15,
+      "lon": -123,
+      "lastUpdate": "2026-10-01T21:00:00.000Z"
     },
     {
       "id": "ep152026",
@@ -33,11 +33,11 @@
       "classification": "TS",
       "intensity": "50",
       "pressure": "993",
-      "movementDir": 295,
-      "movementSpeed": 5,
-      "lat": 22,
-      "lon": -165.4,
-      "lastUpdate": "2026-10-01T18:00:00.000Z"
+      "movementDir": 320,
+      "movementSpeed": 12,
+      "lat": 22.8,
+      "lon": -165.9,
+      "lastUpdate": "2026-10-02T00:00:00.000Z"
     }
   ]
 }
