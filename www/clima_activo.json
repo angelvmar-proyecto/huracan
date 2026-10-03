@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-10-03T17:31:50Z",
+  "actualizado": "2026-10-03T20:45:18Z",
   "fuente": "NHC/NOAA CurrentStorms.json",
   "hayCiclones": true,
   "tormentas": [
@@ -19,13 +19,13 @@
       "id": "ep152026",
       "name": "Nolo",
       "classification": "HU",
-      "intensity": "95",
-      "pressure": "963",
-      "movementDir": 265,
-      "movementSpeed": 14,
-      "lat": 23.1,
-      "lon": -171.2,
-      "lastUpdate": "2026-10-03T15:00:00.000Z"
+      "intensity": "100",
+      "pressure": "959",
+      "movementDir": 270,
+      "movementSpeed": 17,
+      "lat": 23.2,
+      "lon": -173.1,
+      "lastUpdate": "2026-10-03T21:00:00.000Z"
     }
   ]
 }
