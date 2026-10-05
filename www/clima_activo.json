@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-10-05T07:31:04Z",
+  "actualizado": "2026-10-05T16:55:26Z",
   "fuente": "NHC/NOAA CurrentStorms.json",
   "hayCiclones": true,
   "tormentas": [
@@ -7,13 +7,13 @@
       "id": "ep182026",
       "name": "Rachel",
       "classification": "HU",
-      "intensity": "85",
-      "pressure": "967",
-      "movementDir": 290,
+      "intensity": "75",
+      "pressure": "976",
+      "movementDir": 275,
       "movementSpeed": 7,
-      "lat": 20.2,
-      "lon": -114.8,
-      "lastUpdate": "2026-10-05T03:00:00.000Z"
+      "lat": 20.4,
+      "lon": -116.2,
+      "lastUpdate": "2026-10-05T15:00:00.000Z"
     }
   ]
 }
