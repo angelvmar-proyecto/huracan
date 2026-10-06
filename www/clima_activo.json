@@ -1,19 +1,31 @@
 {
-  "actualizado": "2026-10-06T17:04:08Z",
+  "actualizado": "2026-10-06T21:48:50Z",
   "fuente": "NHC/NOAA CurrentStorms.json",
   "hayCiclones": true,
   "tormentas": [
     {
+      "id": "al092026",
+      "name": "Nine",
+      "classification": "TD",
+      "intensity": "30",
+      "pressure": "1007",
+      "movementDir": 90,
+      "movementSpeed": 5,
+      "lat": 22.1,
+      "lon": -95.6,
+      "lastUpdate": "2026-10-06T21:00:00.000Z"
+    },
+    {
       "id": "ep182026",
       "name": "Rachel",
       "classification": "HU",
-      "intensity": "75",
-      "pressure": "977",
+      "intensity": "70",
+      "pressure": "979",
       "movementDir": 275,
-      "movementSpeed": 8,
+      "movementSpeed": 7,
       "lat": 20.5,
-      "lon": -119.5,
-      "lastUpdate": "2026-10-06T15:00:00.000Z"
+      "lon": -120.1,
+      "lastUpdate": "2026-10-06T21:00:00.000Z"
     }
   ]
 }
