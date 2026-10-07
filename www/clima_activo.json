@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-10-07T15:17:51Z",
+  "actualizado": "2026-10-07T20:42:53Z",
   "fuente": "NHC/NOAA CurrentStorms.json",
   "hayCiclones": true,
   "tormentas": [
@@ -7,13 +7,13 @@
       "id": "al092026",
       "name": "Isaias",
       "classification": "TS",
-      "intensity": "40",
-      "pressure": "1000",
+      "intensity": "45",
+      "pressure": "997",
       "movementDir": 70,
       "movementSpeed": 8,
-      "lat": 22.4,
-      "lon": -93.6,
-      "lastUpdate": "2026-10-07T15:00:00.000Z"
+      "lat": 22.6,
+      "lon": -93.4,
+      "lastUpdate": "2026-10-07T18:00:00.000Z"
     },
     {
       "id": "ep182026",
@@ -29,15 +29,15 @@
     },
     {
       "id": "ep202026",
-      "name": "Twenty-E",
-      "classification": "TD",
-      "intensity": "30",
-      "pressure": "1006",
+      "name": "Simon",
+      "classification": "TS",
+      "intensity": "35",
+      "pressure": "1004",
       "movementDir": 300,
       "movementSpeed": 8,
-      "lat": 14.1,
-      "lon": -100.9,
-      "lastUpdate": "2026-10-07T15:00:00.000Z"
+      "lat": 15.5,
+      "lon": -101.6,
+      "lastUpdate": "2026-10-07T21:00:00.000Z"
     }
   ]
 }
