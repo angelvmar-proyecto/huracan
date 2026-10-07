@@ -1,19 +1,19 @@
 {
-  "actualizado": "2026-10-07T07:35:06Z",
+  "actualizado": "2026-10-07T15:17:51Z",
   "fuente": "NHC/NOAA CurrentStorms.json",
   "hayCiclones": true,
   "tormentas": [
     {
       "id": "al092026",
-      "name": "Nine",
-      "classification": "TD",
-      "intensity": "30",
-      "pressure": "1005",
-      "movementDir": 80,
-      "movementSpeed": 5,
-      "lat": 22.1,
-      "lon": -95,
-      "lastUpdate": "2026-10-07T03:00:00.000Z"
+      "name": "Isaias",
+      "classification": "TS",
+      "intensity": "40",
+      "pressure": "1000",
+      "movementDir": 70,
+      "movementSpeed": 8,
+      "lat": 22.4,
+      "lon": -93.6,
+      "lastUpdate": "2026-10-07T15:00:00.000Z"
     },
     {
       "id": "ep182026",
@@ -22,10 +22,22 @@
       "intensity": "70",
       "pressure": "979",
       "movementDir": 285,
-      "movementSpeed": 6,
-      "lat": 20.4,
-      "lon": -120.4,
-      "lastUpdate": "2026-10-07T03:00:00.000Z"
+      "movementSpeed": 7,
+      "lat": 20.9,
+      "lon": -121.8,
+      "lastUpdate": "2026-10-07T15:00:00.000Z"
+    },
+    {
+      "id": "ep202026",
+      "name": "Twenty-E",
+      "classification": "TD",
+      "intensity": "30",
+      "pressure": "1006",
+      "movementDir": 300,
+      "movementSpeed": 8,
+      "lat": 14.1,
+      "lon": -100.9,
+      "lastUpdate": "2026-10-07T15:00:00.000Z"
     }
   ]
 }
