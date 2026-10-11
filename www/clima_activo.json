@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-10-11T00:21:22Z",
+  "actualizado": "2026-10-11T06:13:14Z",
   "fuente": "NHC/NOAA CurrentStorms.json",
   "hayCiclones": true,
   "tormentas": [
@@ -7,37 +7,37 @@
       "id": "al092026",
       "name": "Isaias",
       "classification": "PTC",
-      "intensity": "25",
-      "pressure": "1007",
-      "movementDir": 25,
-      "movementSpeed": 15,
-      "lat": 33.5,
-      "lon": -86.9,
-      "lastUpdate": "2026-10-10T21:00:00.000Z"
+      "intensity": "20",
+      "pressure": "1009",
+      "movementDir": 40,
+      "movementSpeed": 16,
+      "lat": 35,
+      "lon": -86.7,
+      "lastUpdate": "2026-10-11T03:00:00.000Z"
     },
     {
       "id": "ep182026",
       "name": "Rachel",
-      "classification": "TS",
-      "intensity": "55",
-      "pressure": "989",
-      "movementDir": 25,
-      "movementSpeed": 30,
-      "lat": 27.4,
-      "lon": -116.7,
-      "lastUpdate": "2026-10-11T00:00:00.000Z"
+      "classification": "PTC",
+      "intensity": "50",
+      "pressure": "987",
+      "movementDir": 15,
+      "movementSpeed": 36,
+      "lat": 31.5,
+      "lon": -116.5,
+      "lastUpdate": "2026-10-11T06:00:00.000Z"
     },
     {
       "id": "ep202026",
       "name": "Simon",
       "classification": "HU",
-      "intensity": "130",
-      "pressure": "932",
-      "movementDir": 360,
-      "movementSpeed": 3,
-      "lat": 17.9,
-      "lon": -104.8,
-      "lastUpdate": "2026-10-11T00:00:00.000Z"
+      "intensity": "135",
+      "pressure": "928",
+      "movementDir": 355,
+      "movementSpeed": 5,
+      "lat": 18.4,
+      "lon": -105,
+      "lastUpdate": "2026-10-11T06:00:00.000Z"
     }
   ]
 }
