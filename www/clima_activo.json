@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-10-10T21:19:31Z",
+  "actualizado": "2026-10-11T00:21:22Z",
   "fuente": "NHC/NOAA CurrentStorms.json",
   "hayCiclones": true,
   "tormentas": [
@@ -23,9 +23,9 @@
       "pressure": "989",
       "movementDir": 25,
       "movementSpeed": 30,
-      "lat": 27,
-      "lon": -118.3,
-      "lastUpdate": "2026-10-10T21:00:00.000Z"
+      "lat": 27.4,
+      "lon": -116.7,
+      "lastUpdate": "2026-10-11T00:00:00.000Z"
     },
     {
       "id": "ep202026",
@@ -34,10 +34,10 @@
       "intensity": "130",
       "pressure": "932",
       "movementDir": 360,
-      "movementSpeed": 5,
-      "lat": 17.6,
+      "movementSpeed": 3,
+      "lat": 17.9,
       "lon": -104.8,
-      "lastUpdate": "2026-10-10T21:00:00.000Z"
+      "lastUpdate": "2026-10-11T00:00:00.000Z"
     }
   ]
 }
