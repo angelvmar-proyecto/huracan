@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-10-13T01:09:05Z",
+  "actualizado": "2026-10-13T08:12:24Z",
   "fuente": "NHC/NOAA CurrentStorms.json",
   "hayCiclones": true,
   "tormentas": [
@@ -7,13 +7,13 @@
       "id": "ep202026",
       "name": "Simon",
       "classification": "HU",
-      "intensity": "85",
-      "pressure": "969",
-      "movementDir": 300,
+      "intensity": "80",
+      "pressure": "977",
+      "movementDir": 310,
       "movementSpeed": 3,
-      "lat": 20.3,
-      "lon": -106.9,
-      "lastUpdate": "2026-10-13T00:00:00.000Z"
+      "lat": 20.5,
+      "lon": -107.1,
+      "lastUpdate": "2026-10-13T06:00:00.000Z"
     }
   ]
 }
