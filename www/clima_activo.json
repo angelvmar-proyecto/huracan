@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-10-15T23:45:44Z",
+  "actualizado": "2026-10-16T03:43:40Z",
   "fuente": "NHC/NOAA CurrentStorms.json",
   "hayCiclones": true,
   "tormentas": [
@@ -7,25 +7,25 @@
       "id": "ep212026",
       "name": "Trudy",
       "classification": "HU",
-      "intensity": "80",
-      "pressure": "978",
+      "intensity": "90",
+      "pressure": "971",
       "movementDir": 345,
-      "movementSpeed": 6,
-      "lat": 13.7,
-      "lon": -101.7,
-      "lastUpdate": "2026-10-15T21:00:00.000Z"
+      "movementSpeed": 7,
+      "lat": 14.3,
+      "lon": -102.1,
+      "lastUpdate": "2026-10-16T03:00:00.000Z"
     },
     {
       "id": "ep202026",
       "name": "Simon",
       "classification": "TS",
-      "intensity": "45",
-      "pressure": "999",
-      "movementDir": 325,
-      "movementSpeed": 1,
-      "lat": 19.3,
-      "lon": -108.2,
-      "lastUpdate": "2026-10-15T21:00:00.000Z"
+      "intensity": "40",
+      "pressure": "1002",
+      "movementDir": 320,
+      "movementSpeed": 2,
+      "lat": 19.5,
+      "lon": -108.5,
+      "lastUpdate": "2026-10-16T03:00:00.000Z"
     }
   ]
 }
