@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-10-16T08:50:38Z",
+  "actualizado": "2026-10-16T13:48:32Z",
   "fuente": "NHC/NOAA CurrentStorms.json",
   "hayCiclones": true,
   "tormentas": [
@@ -8,12 +8,12 @@
       "name": "Trudy",
       "classification": "HU",
       "intensity": "105",
-      "pressure": "957",
-      "movementDir": 310,
+      "pressure": "956",
+      "movementDir": 325,
       "movementSpeed": 6,
-      "lat": 14,
-      "lon": -102.4,
-      "lastUpdate": "2026-10-16T06:00:00.000Z"
+      "lat": 14.5,
+      "lon": -102.5,
+      "lastUpdate": "2026-10-16T12:00:00.000Z"
     },
     {
       "id": "ep202026",
