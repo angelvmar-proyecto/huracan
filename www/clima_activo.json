@@ -1,6 +1,19 @@
 {
-  "actualizado": "2026-10-21T13:04:55Z",
+  "actualizado": "2026-10-21T18:10:19Z",
   "fuente": "NHC/NOAA CurrentStorms.json",
-  "hayCiclones": false,
-  "tormentas": []
+  "hayCiclones": true,
+  "tormentas": [
+    {
+      "id": "ep222026",
+      "name": "Twenty-Two-E",
+      "classification": "TD",
+      "intensity": "30",
+      "pressure": "1005",
+      "movementDir": 265,
+      "movementSpeed": 7,
+      "lat": 9.5,
+      "lon": -99.3,
+      "lastUpdate": "2026-10-21T15:00:00.000Z"
+    }
+  ]
 }
