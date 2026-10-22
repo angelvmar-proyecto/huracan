@@ -1,31 +1,31 @@
 {
-  "actualizado": "2026-10-22T19:49:35Z",
+  "actualizado": "2026-10-22T23:02:42Z",
   "fuente": "NHC/NOAA CurrentStorms.json",
   "hayCiclones": true,
   "tormentas": [
     {
       "id": "al102026",
       "name": "Josephine",
-      "classification": "STS",
+      "classification": "PTC",
       "intensity": "55",
       "pressure": "988",
-      "movementDir": 45,
-      "movementSpeed": 12,
-      "lat": 39.2,
-      "lon": -67.3,
-      "lastUpdate": "2026-10-22T15:00:00.000Z"
+      "movementDir": 55,
+      "movementSpeed": 17,
+      "lat": 40,
+      "lon": -65.8,
+      "lastUpdate": "2026-10-22T21:00:00.000Z"
     },
     {
       "id": "ep222026",
       "name": "Vance",
       "classification": "TS",
-      "intensity": "50",
-      "pressure": "997",
-      "movementDir": 305,
-      "movementSpeed": 3,
-      "lat": 9.7,
-      "lon": -101,
-      "lastUpdate": "2026-10-22T15:00:00.000Z"
+      "intensity": "55",
+      "pressure": "994",
+      "movementDir": 300,
+      "movementSpeed": 5,
+      "lat": 10,
+      "lon": -101.5,
+      "lastUpdate": "2026-10-22T21:00:00.000Z"
     }
   ]
 }
