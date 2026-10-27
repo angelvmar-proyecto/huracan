@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-10-27T00:00:20Z",
+  "actualizado": "2026-10-27T05:24:38Z",
   "fuente": "NHC/NOAA CurrentStorms.json",
   "hayCiclones": true,
   "tormentas": [
@@ -7,25 +7,25 @@
       "id": "ep222026",
       "name": "Vance",
       "classification": "TS",
-      "intensity": "55",
-      "pressure": "997",
-      "movementDir": 280,
-      "movementSpeed": 6,
-      "lat": 15.4,
-      "lon": -106.1,
-      "lastUpdate": "2026-10-26T21:00:00.000Z"
+      "intensity": "45",
+      "pressure": "999",
+      "movementDir": 275,
+      "movementSpeed": 5,
+      "lat": 15.5,
+      "lon": -106.3,
+      "lastUpdate": "2026-10-27T03:00:00.000Z"
     },
     {
       "id": "cp032026",
       "name": "Olana",
-      "classification": "TD",
-      "intensity": "30",
+      "classification": "PTC",
+      "intensity": "25",
       "pressure": "1007",
-      "movementDir": 140,
-      "movementSpeed": 3,
-      "lat": 13.6,
-      "lon": -176.6,
-      "lastUpdate": "2026-10-26T21:00:00.000Z"
+      "movementDir": 150,
+      "movementSpeed": 7,
+      "lat": 13,
+      "lon": -175.9,
+      "lastUpdate": "2026-10-27T03:00:00.000Z"
     }
   ]
 }
