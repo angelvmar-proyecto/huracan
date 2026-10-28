@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-10-28T13:23:12Z",
+  "actualizado": "2026-10-28T18:59:52Z",
   "fuente": "NHC/NOAA CurrentStorms.json",
   "hayCiclones": true,
   "tormentas": [
@@ -8,12 +8,12 @@
       "name": "Vance",
       "classification": "TS",
       "intensity": "35",
-      "pressure": "1003",
-      "movementDir": 360,
-      "movementSpeed": 12,
-      "lat": 18.6,
-      "lon": -108.6,
-      "lastUpdate": "2026-10-28T09:00:00.000Z"
+      "pressure": "1004",
+      "movementDir": 340,
+      "movementSpeed": 10,
+      "lat": 19.2,
+      "lon": -109.2,
+      "lastUpdate": "2026-10-28T15:00:00.000Z"
     }
   ]
 }
