@@ -1,19 +1,19 @@
 {
-  "actualizado": "2026-11-12T12:20:26Z",
+  "actualizado": "2026-11-12T20:17:24Z",
   "fuente": "NHC/NOAA CurrentStorms.json",
   "hayCiclones": true,
   "tormentas": [
     {
       "id": "cp042026",
       "name": "Pena",
-      "classification": "TD",
+      "classification": "PTC",
       "intensity": "30",
-      "pressure": "1009",
+      "pressure": "1006",
       "movementDir": 270,
-      "movementSpeed": 16,
+      "movementSpeed": 18,
       "lat": 9.8,
-      "lon": -172,
-      "lastUpdate": "2026-11-12T09:00:00.000Z"
+      "lon": -173.4,
+      "lastUpdate": "2026-11-12T15:00:00.000Z"
     }
   ]
 }
